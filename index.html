@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<style>
+<style>ƒ
 :root{
   --bg:#060606; --panel:#0e0e0e; --panel-2:#151515; --line:#232323; --line-2:#2e2e2e;
   --text:#d8d2d2; --dim:#6f6868; --dim-2:#4a4545;
@@ -1484,6 +1484,20 @@ function showOffice(doc) {
         const w = Math.min(box.clientWidth - 20, 1100) || 900;
         const pv = window.pptxPreview.init(box, { width: w, height: Math.round(w * 9 / 16) });
         await pv.preview(buf);
+        
+        // --- ФІКС КВАДРАТИКІВ (БАГ БІБЛІОТЕКИ PPTX-PREVIEW) ---
+        // Бібліотека предперегляду часто помилково малює маркери списків на порожніх рядках.
+        // Оскільки в реальному PPTX їх немає, ми просто вичищаємо ці символи з HTML.
+        const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT, null, false);
+        let n;
+        while ((n = walker.nextNode())) {
+          // Шукаємо будь-які квадратні маркери і стираємо їх
+          if (/[■▪◼▫◻]/.test(n.nodeValue)) {
+            n.nodeValue = n.nodeValue.replace(/[■▪◼▫◻]/g, '');
+          }
+        }
+        // --------------------------------------------------------
+
         box.querySelectorAll('canvas,div').forEach(() => {});
       } else {
         if (!window.JSZip) await Engine.loadScript(Engine.CDN.jszip);
