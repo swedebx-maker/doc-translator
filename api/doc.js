@@ -9,6 +9,18 @@ const ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const BAD = /SEX|KUK|FUC|FUK|FCK|SHIT|CUNT|DICK|COCK|PISS|PORN|PORR|HORA|NAZI|RAPE|ANAL|TWAT|SLUT|KNUL|TITS|BAJS|FAN|ASS|GAY|KKK|HUJ|HUY|XUY|SUKA|BLYA|PIZD|ZHOP|KURW|CUM|DUM|JEB/;
 const okCode = c => /^[A-Z0-9]{5}$/.test(c || '');
 
+async function list(prefix) {
+  const out = [];
+  let cursor;
+  do {
+    const r = await blob.list({ prefix, cursor, limit: 1000 });
+    out.push(...r.blobs);
+    cursor = r.cursor;
+  } while (cursor);
+  return out;
+}
+module.exports = { enabled, url, getJSON, putJSON, list };
+
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
