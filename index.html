@@ -7,19 +7,19 @@
 <meta name="theme-color" content="#060606">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>ПЕРЕКЛАД · svenska → українська</title>
+<title>ПЕРЕКЛАД · svenska -> українська</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%23060606'/%3E%3Cpath fill='%23c3252c' d='M1 1h6v1H1zM1 2h1v5H1zM6 2h1v5H6z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#060606; --panel:#0e0e0e; --panel-2:#151515; --line:#232323; --line-2:#2e2e2e;
   --text:#d8d2d2; --dim:#6f6868; --dim-2:#4a4545;
   --red:#c3252c; --red-d:#7a1418; --red-dd:#3a0a0c; --red-l:#ff5a5f;
-  --px:'Tiny5', 'Press Start 2P', monospace;
-  --logo:'Press Start 2P', 'Tiny5', monospace;
+  --px:'Minecraft', 'Minecraftia', 'Press Start 2P', monospace;
+  --logo:'Minecraft', 'Minecraftia', 'Press Start 2P', monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--px);overflow:hidden;}
@@ -29,7 +29,7 @@ button{cursor:pointer;border:none;background:none;}
 .hidden{display:none !important;}
 ::selection{background:var(--red-d);color:#fff;}
 
-/* ---------- сцена: звёзды и пиксельный горизонт ---------- */
+/* ---------- сцена: зірки і піксельний горизонт ---------- */
 #scene{position:fixed;inset:0;z-index:0;pointer-events:none;}
 #scene svg{position:absolute;left:0;bottom:0;width:100%;height:46vh;}
 #stars{position:absolute;inset:0;}
@@ -39,71 +39,69 @@ button{cursor:pointer;border:none;background:none;}
 @keyframes tw{50%{opacity:.25;}}
 #stars i.t{animation:tw 3.5s steps(2) infinite;}
 
-/* ---------- пиксельные рамки (ступенчатые углы, как в Майнкрафте) ---------- */
+/* ---------- піксельні рамки (сходинки) ---------- */
 .px{clip-path:polygon(0 6px,3px 6px,3px 3px,6px 3px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px));}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 26px;background:var(--panel-2);color:var(--text);
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;background:var(--panel-2);color:var(--text);
   box-shadow:inset 0 0 0 3px var(--line-2), inset -3px -6px 0 3px #090909, inset 3px 3px 0 3px #222;
-  font-size:20px;letter-spacing:.06em;text-transform:uppercase;transition:transform .06s;}
+  font-size:12px;letter-spacing:0;text-transform:uppercase;transition:transform .06s;}
 .btn:hover{background:#1b1b1b;}
 .btn:active{transform:translateY(3px);}
 .btn.red{background:var(--red-d);color:#ffe9e9;box-shadow:inset 0 0 0 3px #a01c22, inset -3px -6px 0 3px #4d0c0f, inset 3px 3px 0 3px #b8333a;}
 .btn.red:hover{background:#8c181d;}
-.btn.small{padding:10px 16px;font-size:15px;gap:8px;}
+.btn.small{padding:8px 12px;font-size:10px;gap:6px;}
 .btn:disabled{opacity:.4;pointer-events:none;}
-.ico{width:1.1em;height:1.1em;display:inline-block;image-rendering:pixelated;}
+.ico{width:1.2em;height:1.2em;display:inline-block;image-rendering:pixelated;}
 
-/* ---------- экраны ---------- */
+/* ---------- екрани ---------- */
 .screen{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px 18vh;}
 #lang{position:fixed;top:16px;right:16px;z-index:5;display:flex;gap:0;}
-#lang button{padding:8px 12px;font-size:15px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);}
+#lang button{padding:6px 10px;font-size:10px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);}
 #lang button.on{color:#fff;background:var(--red-dd);box-shadow:inset 0 0 0 2px var(--red-d);}
 
-.logo{font-family:var(--logo);font-size:clamp(34px,6.4vw,72px);font-weight:400;letter-spacing:.04em;color:#efe9e9;line-height:1;
-  text-shadow:4px 4px 0 var(--red-dd), 8px 8px 0 #160304;}
-.logo b{color:var(--red);font-weight:400;}
-.tag{margin-top:22px;font-size:clamp(14px,2vw,18px);color:var(--dim);letter-spacing:.2em;text-transform:uppercase;}
+.logo{font-family:var(--logo);font-size:clamp(26px,5.5vw,56px);font-weight:400;color:#ffffff;line-height:1;
+  text-shadow:4px 4px 0 #000000;}
+.tag{margin-top:22px;font-size:clamp(10px,1.5vw,14px);color:var(--dim);letter-spacing:0;text-transform:uppercase;}
 .tag .arr{color:var(--red);}
 
 .drop{margin-top:44px;width:min(560px,92vw);padding:30px 24px 26px;background:var(--panel);text-align:center;position:relative;
   box-shadow:inset 0 0 0 3px var(--line-2), inset 0 -6px 0 3px #0a0a0a;}
 .drop.over{background:#1a0a0b;box-shadow:inset 0 0 0 3px var(--red);}
-.drop .btn{width:100%;font-size:22px;padding:20px;}
-.drop .fmt{margin-top:14px;font-size:13px;color:var(--dim);letter-spacing:.18em;}
-.drop .hint{margin-top:6px;font-size:15px;color:var(--dim-2);}
+.drop .btn{width:100%;font-size:14px;padding:16px;}
+.drop .hint{margin-top:10px;font-size:10px;color:var(--dim-2);line-height:1.4;}
 #file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
 
 .codebox{margin-top:22px;width:min(560px,92vw);display:flex;flex-direction:column;align-items:center;gap:10px;}
-.codebox .lbl{font-size:17px;color:var(--dim);letter-spacing:.06em;}
+.codebox .lbl{font-size:12px;color:var(--dim);}
 .coderow{display:flex;gap:10px;width:100%;}
-#code{flex:1;min-width:0;padding:14px 16px;font-size:26px;letter-spacing:.4em;text-transform:uppercase;text-align:center;
+#code{flex:1;min-width:0;padding:12px 14px;font-size:18px;text-transform:uppercase;text-align:center;
   background:#0b0b0b;border:none;outline:none;color:#fff;box-shadow:inset 0 0 0 3px var(--line-2);}
 #code:focus{box-shadow:inset 0 0 0 3px var(--red);}
-#code::placeholder{color:#2e2a2a;letter-spacing:.4em;}
-.err{min-height:20px;font-size:14px;color:var(--red-l);text-align:center;margin-top:8px;}
+#code::placeholder{color:#2e2a2a;}
+.err{min-height:20px;font-size:10px;color:var(--red-l);text-align:center;margin-top:8px;}
 
 .recent{margin-top:22px;width:min(560px,92vw);}
-.recent .lbl{font-size:13px;color:var(--dim-2);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
-.recent a{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;margin-bottom:6px;background:var(--panel);color:var(--text);text-decoration:none;font-size:15px;box-shadow:inset 0 0 0 2px var(--line);}
+.recent .lbl{font-size:10px;color:var(--dim-2);text-transform:uppercase;margin-bottom:8px;}
+.recent a{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;margin-bottom:6px;background:var(--panel);color:var(--text);text-decoration:none;font-size:10px;box-shadow:inset 0 0 0 2px var(--line);}
 .recent a:hover{box-shadow:inset 0 0 0 2px var(--red-d);}
 .recent a span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
-.recent a span:last-child{color:var(--red);letter-spacing:.2em;flex:0 0 auto;}
+.recent a span:last-child{color:var(--red);flex:0 0 auto;}
 
-/* ---------- работа ---------- */
-#work .title{font-size:clamp(22px,3.4vw,34px);letter-spacing:.06em;max-width:90vw;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+/* ---------- робота ---------- */
+#work .title{font-size:clamp(14px,2.5vw,20px);max-width:90vw;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 .bar{margin-top:34px;width:min(620px,90vw);height:34px;padding:5px;background:#0b0b0b;box-shadow:inset 0 0 0 3px var(--line-2);display:flex;gap:4px;}
 .bar i{flex:1;background:#141414;}
 .bar i.on{background:var(--red);box-shadow:inset 0 -4px 0 var(--red-d);}
-.stage{margin-top:22px;font-size:18px;color:var(--text);letter-spacing:.05em;min-height:24px;text-align:center;}
-.substage{margin-top:8px;font-size:16px;color:var(--dim);min-height:18px;text-align:center;}
+.stage{margin-top:22px;font-size:12px;color:var(--text);min-height:16px;text-align:center;line-height:1.5;}
+.substage{margin-top:8px;font-size:10px;color:var(--dim);min-height:14px;text-align:center;line-height:1.5;}
 .blink{animation:tw 1s steps(2) infinite;}
 #work .btn{margin-top:36px;}
 
-/* ---------- просмотр ---------- */
+/* ---------- перегляд ---------- */
 #view{padding:0;justify-content:flex-start;background:#000;}
 .vtop{flex:0 0 auto;width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;background:#080808;box-shadow:0 3px 0 #111;z-index:3;}
-.vtop .vtitle{flex:1;min-width:0;font-size:17px;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:.04em;}
+.vtop .vtitle{flex:1;min-width:0;font-size:10px;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.5;}
 .seg{display:flex;}
-.seg button{padding:10px 14px;font-size:15px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);letter-spacing:.06em;}
+.seg button{padding:8px 12px;font-size:10px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);}
 .seg button.on{color:#fff;background:var(--red-d);box-shadow:inset 0 0 0 2px #a01c22;}
 .stage-wrap{flex:1 1 auto;width:100%;min-height:0;position:relative;overflow:hidden;touch-action:pan-y pinch-zoom;}
 .pages{position:absolute;inset:0;display:flex;transition:transform .28s steps(8);}
@@ -113,32 +111,30 @@ button{cursor:pointer;border:none;background:none;}
 .pg .hot{position:absolute;inset:0;}
 .pg .hot i{position:absolute;cursor:pointer;}
 .pg .hot i:hover{outline:2px dashed rgba(195,37,44,.55);}
-.pg .loading{position:absolute;color:var(--dim);font-size:15px;}
 .vbot{flex:0 0 auto;width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#080808;box-shadow:0 -3px 0 #111;z-index:3;}
-.vbot .count{min-width:110px;text-align:center;font-size:18px;letter-spacing:.1em;}
+.vbot .count{min-width:90px;text-align:center;font-size:12px;}
 .vbot .sp{flex:1;}
-.tip{position:fixed;z-index:20;max-width:min(520px,92vw);background:#0d0d0d;color:var(--text);padding:16px 18px;font-size:16px;line-height:1.45;
+.tip{position:fixed;z-index:20;max-width:min(520px,92vw);background:#0d0d0d;color:var(--text);padding:16px 18px;font-size:14px;line-height:1.45;
   box-shadow:inset 0 0 0 3px var(--red-d);}
-.tip .k{font-size:12px;color:var(--red);letter-spacing:.18em;margin-bottom:4px;}
-.tip .sv{font-family:Helvetica,Arial,sans-serif;font-size:17px;color:#fff;-webkit-font-smoothing:antialiased;}
-.tip .uk{font-family:Helvetica,Arial,sans-serif;font-size:15px;color:var(--dim);margin-top:10px;-webkit-font-smoothing:antialiased;}
+.tip .k{font-size:10px;color:var(--red);margin-bottom:6px;}
+.tip .sv{font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#fff;-webkit-font-smoothing:antialiased;}
+.tip .uk{font-family:Helvetica,Arial,sans-serif;font-size:12px;color:var(--dim);margin-top:10px;-webkit-font-smoothing:antialiased;}
 .office{flex:1;width:100%;border:none;background:#fff;}
-.office-msg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;text-align:center;color:var(--dim);font-size:16px;}
+.office-msg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;text-align:center;color:var(--dim);font-size:12px;line-height:1.6;}
 
-/* ---------- окно «поделиться» ---------- */
+/* ---------- модальне вікно ---------- */
 .modal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:18px;}
 .modal .box{width:min(520px,94vw);background:var(--panel);padding:28px 24px;text-align:center;box-shadow:inset 0 0 0 3px var(--line-2);}
-.modal .k{font-size:14px;color:var(--dim);letter-spacing:.2em;}
-.modal .bigcode{font-size:clamp(56px,12vw,88px);letter-spacing:.18em;color:#fff;margin:6px 0 2px;text-shadow:4px 4px 0 var(--red-dd);padding-left:.18em;}
-.modal .link{font-size:15px;color:var(--red-l);word-break:break-all;margin-top:6px;}
+.modal .k{font-size:12px;color:var(--dim);}
+.modal .bigcode{font-size:clamp(40px,10vw,70px);color:#fff;margin:12px 0 6px;text-shadow:4px 4px 0 var(--red-dd);}
+.modal .link{font-size:10px;color:var(--red-l);word-break:break-all;margin-top:6px;}
 .modal img{width:170px;height:170px;margin:18px auto 6px;display:block;image-rendering:pixelated;background:#fff;padding:8px;}
-.modal .row{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
-.modal .note{font-size:13px;color:var(--dim);margin-top:12px;line-height:1.5;}
+.modal .row{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+.modal .note{font-size:9px;color:var(--dim);margin-top:16px;line-height:1.6;}
 
 @media (max-width:640px){
-  .btn{font-size:17px;padding:14px 18px;}
   .vtop .vtitle{display:none;}
-  .vbot .count{min-width:70px;font-size:16px;}
+  .vbot .count{min-width:70px;}
 }
 @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
 </style>
@@ -161,11 +157,10 @@ button{cursor:pointer;border:none;background:none;}
 <div id="lang"><button data-l="uk">UA</button><button data-l="sv">SV</button></div>
 
 <section id="home" class="screen">
-  <div class="logo">ПЕРЕ<b>КЛАД</b></div>
-  <div class="tag">svenska <span class="arr">→</span> українська</div>
+  <div class="logo">ПЕРЕКЛАД</div>
+  <div class="tag">svenska <span class="arr">-></span> українська</div>
   <div class="drop px" id="drop">
     <button class="btn red px" id="pick"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges"><path fill="currentColor" d="M3 0h2v4h2v1H6v1H5v1H3V6H2V5H1V4h2zM0 7h8v1H0z"/></svg><span data-t="upload"></span></button>
-    <div class="fmt">PDF · PPTX · DOCX · JPG · PNG</div>
     <div class="hint" data-t="drop"></div>
     <input type="file" id="file" accept=".pdf,.pptx,.docx,.jpg,.jpeg,.png,.webp,application/pdf,image/*">
   </div>
@@ -222,12 +217,6 @@ button{cursor:pointer;border:none;background:none;}
 <script>
 /* =====================================================================
    ДВИЖОК ПЕРЕВОДА (работает в браузере)
-   PDF:   pdf.js рисует страницу → находим текстовые блоки (векторный текст)
-          + текст на картинках (Tesseract OCR) → DeepL переводит блоки страницы
-          с контекстом всей страницы → стираем шведский, сохраняя фон → пишем украинский.
-   Картинки (jpg/png): то же самое, только OCR.
-   PPTX/DOCX: переводим текст внутри XML (форматирование внутри предложения
-          сохраняется тегами DeepL) + картинки внутри файла через OCR.
    ===================================================================== */
 const CDN = {
   pdfjs: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.min.mjs',
@@ -238,7 +227,7 @@ const CDN = {
   blob: 'https://esm.sh/@vercel/blob@2.8.2/client'
 };
 const FONT = 'Helvetica, Arial, "Segoe UI", Roboto, sans-serif';
-const TARGET_LONG = 1800;          // длинная сторона страницы в пикселях
+const TARGET_LONG = 1800;
 const LETTER = /\p{L}/u;
 
 const _loaded = {};
@@ -258,7 +247,6 @@ async function getPdfjs() {
   return _pdfjs;
 }
 
-/* ---------- OCR (один воркер на всё время, язык шведский) ---------- */
 let _ocr = null, _ocrPsm = null;
 async function getOcr(onProgress) {
   if (!_ocr) {
@@ -298,7 +286,6 @@ async function pool(items, n, fn) {
   return out;
 }
 
-/* ---------- перевод (через /api/translate) ---------- */
 class QuotaError extends Error {}
 async function translateTexts(texts, context, tags) {
   if (!texts.length) return [];
@@ -308,7 +295,7 @@ async function translateTexts(texts, context, tags) {
       r = await fetch('/api/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texts, context, tags: !!tags }) });
     } catch (e) { if (attempt < 3) { await new Promise(s => setTimeout(s, 1200 * (attempt + 1))); continue; } throw new Error('net'); }
     if (r.status === 456) throw new QuotaError('quota');
-    if (r.status === 413 && texts.length > 1) {          // слишком много текста: делим пополам
+    if (r.status === 413 && texts.length > 1) {
       const mid = texts.length >> 1;
       return (await translateTexts(texts.slice(0, mid), context, tags)).concat(await translateTexts(texts.slice(mid), context, tags));
     }
@@ -317,18 +304,14 @@ async function translateTexts(texts, context, tags) {
   }
 }
 
-/* =====================================================================
-   1. ПОИСК ТЕКСТОВЫХ БЛОКОВ
-   ===================================================================== */
 const BULLETS = /^[•●▪◦■□➢➤►▶✓✔‣⁃•●-]$/;
 
-// Векторный текст PDF → строки → блоки (абзацы)
 function pdfTextItems(tc, vp, pdfjs, page) {
   const items = [];
   for (const it of tc.items) {
     if (!it.str || !it.str.trim()) continue;
     const tx = pdfjs.Util.transform(vp.transform, it.transform);
-    if (Math.abs(tx[1]) > 0.01 * Math.abs(tx[0]) || Math.abs(tx[2]) > 0.01 * Math.abs(tx[3])) continue;   // повёрнутый текст не трогаем
+    if (Math.abs(tx[1]) > 0.01 * Math.abs(tx[0]) || Math.abs(tx[2]) > 0.01 * Math.abs(tx[3])) continue;
     const h = Math.hypot(tx[2], tx[3]); if (h < 4) continue;
     const st = tc.styles[it.fontName] || {};
     const asc = st.ascent || 0.86, desc = st.descent || -0.22;
@@ -365,7 +348,6 @@ function itemsToLines(items) {
       cur.x1 = Math.max(cur.x1, it.x1); cur.top = Math.min(cur.top, it.top); cur.bot = Math.max(cur.bot, it.bot); cur.h = Math.max(cur.h, it.h);
     }
   }
-  // маркеры списков оставляем как есть
   for (const l of lines) {
     const first = l.items[0];
     if (first && BULLETS.test(first.str.trim()) && l.items.length > 1) {
@@ -398,7 +380,6 @@ function linesToBlocks(lines, opts) {
       const centerOk = Math.abs((l.x0 + l.x1) / 2 - (b.x0 + b.x1) / 2) < o.align * h;
       const rightOk = Math.abs(l.x1 - b.x1) < o.align * h;
       if (!(leftOk || centerOk || rightOk)) continue;
-      // строка не должна быть явно отдельным заголовком над абзацем
       if (!best || vgap < best.vgap) best = { b, vgap };
     }
     if (best) { const b = best.b; b.lines.push(l); b.x0 = Math.min(b.x0, l.x0); b.x1 = Math.max(b.x1, l.x1); b.y1 = Math.max(b.y1, l.bot); }
@@ -411,12 +392,11 @@ function linesToBlocks(lines, opts) {
     b.italic = ls.filter(l => l.italic).length > ls.length / 2;
     let text = '';
     ls.forEach((l, i) => {
-      if (i && /[-‐]$/.test(text) && /^\p{Ll}/u.test(l.text)) text = text.replace(/[-‐]$/, '') + l.text;   // перенос слова
+      if (i && /[-‐]$/.test(text) && /^\p{Ll}/u.test(l.text)) text = text.replace(/[-‐]$/, '') + l.text;
       else text += (i ? ' ' : '') + l.text;
     });
     b.text = text;
     b.pitch = ls.length > 1 ? (ls[ls.length - 1].base - ls[0].base) / (ls.length - 1) : b.size * 1.2;
-    // выравнивание
     if (ls.length > 1) {
       const sd = a => { const m = a.reduce((x, y) => x + y, 0) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / a.length); };
       const L = sd(ls.map(l => l.x0)), C = sd(ls.map(l => (l.x0 + l.x1) / 2)), R = sd(ls.map(l => l.x1));
@@ -426,7 +406,6 @@ function linesToBlocks(lines, opts) {
   return blocks;
 }
 
-// Где на странице лежат картинки (по списку команд рисования PDF)
 async function pdfImageRects(page, vp, pdfjs) {
   const ops = await page.getOperatorList();
   const O = pdfjs.OPS, U = pdfjs.Util;
@@ -446,15 +425,12 @@ async function pdfImageRects(page, vp, pdfjs) {
       if (r.x1 - r.x0 > 60 && r.y1 - r.y0 > 40) rects.push(r);
     }
   }
-  // объединяем дубликаты/вложенные
   const out = [];
   rects.sort((a, b) => (b.x1 - b.x0) * (b.y1 - b.y0) - (a.x1 - a.x0) * (a.y1 - a.y0));
   for (const r of rects) { if (!out.some(o => interArea(o, r) > 0.85 * (r.x1 - r.x0) * (r.y1 - r.y0))) out.push(r); }
   return out.slice(0, 12);
 }
 
-// Адаптивная бинаризация: текст на фото/градиенте становится чёрным на белом.
-// mode 'dark' — тёмный текст на светлом, 'light' — светлый текст на тёмном.
 function binarize(c, mode) {
   const w = c.width, h = c.height;
   const d = c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
@@ -484,7 +460,6 @@ function lumStats(c) {
   const m = s / n; return { mean: m, std: Math.sqrt(Math.max(0, s2 / n - m * m)) };
 }
 
-// OCR области картинки → строки в координатах страницы
 async function ocrRegion(src, r, psm, onOcrLoad) {
   const w = r.x1 - r.x0, h = r.y1 - r.y0;
   const long = Math.max(w, h);
@@ -492,7 +467,6 @@ async function ocrRegion(src, r, psm, onOcrLoad) {
   const c = makeCanvas(w * k, h * k); const ctx = c.getContext('2d', { willReadFrequently: true });
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(src, r.x0, r.y0, w, h, 0, 0, c.width, c.height);
-  // однотонный фон: хватает тёмного текста; фото/градиент/тёмный фон: ищем и светлый текст
   const st = lumStats(c);
   const modes = ['dark']; if (st.std > 30 || st.mean < 170) modes.push('light');
   let raw = [];
@@ -502,8 +476,6 @@ async function ocrRegion(src, r, psm, onOcrLoad) {
     const bd = bin.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, bin.width, bin.height).data;
     let got = await ocrCanvas(bin, psm, onOcrLoad);
     freeCanvas(bin);
-    // проверка: «буквы» действительно светлее (для light) / темнее (для dark) фона строки.
-    // Иначе это контур тёмного текста, найденный светлым проходом, и т.п.
     got = got.filter(l => {
       const bb = l.bbox, W = c.width; let inkS = 0, inkN = 0; const all = [];
       for (let y = Math.max(0, bb.y0); y < Math.min(c.height, bb.y1); y += 2) for (let x = Math.max(0, bb.x0); x < Math.min(W, bb.x1); x += 2) {
@@ -516,7 +488,6 @@ async function ocrRegion(src, r, psm, onOcrLoad) {
     });
     got.forEach(l => {
       l.mode = m;
-      // рамка строки — только по нормальным словам (без мусора вроде «| |»)
       const ws = (l.words || []).filter(wd => wd.confidence > 40 && /[\p{L}\p{N}]/u.test(wd.text));
       if (ws.length) {
         l.text = ws.map(wd => wd.text).join(' ');
@@ -526,7 +497,6 @@ async function ocrRegion(src, r, psm, onOcrLoad) {
     });
     raw = raw.concat(got);
   }
-  // из пересекающихся вариантов (тёмный/светлый проход) оставляем самый полный и уверенный
   const area = b => Math.max(1, (b.x1 - b.x0) * (b.y1 - b.y0));
   const score = l => (l.confidence / 100) * ((l.text || '').replace(/[^\p{L}\p{N}]/gu, '').length);
   raw = raw.filter(l => l.confidence >= 58);
@@ -545,7 +515,6 @@ async function ocrRegion(src, r, psm, onOcrLoad) {
     const letters = (text.match(/\p{L}/gu) || []).length;
     if (letters < 2) continue;
     if (l.confidence < 58) continue;
-    // отбрасываем мусор: слишком много «странных» символов
     if ((text.match(/[^\p{L}\p{N}\s.,:;!?()\-–%'"’/+&=°€$₂²³]/gu) || []).length > text.length * 0.2) continue;
     const bb = l.bbox;
     const x0 = r.x0 + bb.x0 / k, x1 = r.x0 + bb.x1 / k, y0 = r.y0 + bb.y0 / k, y1 = r.y0 + bb.y1 / k;
@@ -557,34 +526,28 @@ async function ocrRegion(src, r, psm, onOcrLoad) {
   return lines;
 }
 
-/* =====================================================================
-   2. ЦВЕТА, СТИРАНИЕ, РИСОВАНИЕ
-   ===================================================================== */
 function analyzeBlock(ctx, b, W, H) {
   const pad = Math.max(3, Math.round(b.size * 0.3));
-  const R = Math.max(6, Math.round(b.size * 0.6));            // окно для локального фона
+  const R = Math.max(6, Math.round(b.size * 0.6));
   const padX = b.ocr ? Math.ceil(b.size * 0.45) + 2 : pad;
   const X0 = clamp(Math.floor(b.x0 - padX - R), 0, W - 1), Y0 = clamp(Math.floor(b.y0 - pad - R), 0, H - 1);
   const X1 = clamp(Math.ceil(b.x1 + padX + R), X0 + 1, W), Y1 = clamp(Math.ceil(b.y1 + pad + R), Y0 + 1, H);
   const w = X1 - X0, h = Y1 - Y0;
   const d = ctx.getImageData(X0, Y0, w, h).data;
-  // кольцо вокруг блока → цвет фона и его «пестрота»
   const ring = [];
   const ix0 = b.x0 - X0 - 1, ix1 = b.x1 - X0 + 1, iy0 = b.y0 - Y0 - 1, iy1 = b.y1 - Y0 + 1;
   const step = Math.max(1, Math.round(Math.sqrt(w * h / 30000)));
   for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) {
     if (x >= ix0 && x <= ix1 && y >= iy0 && y <= iy1) continue;
     if (x < ix0 - pad - 3 || x > ix1 + pad + 3 || y < iy0 - pad - 3 || y > iy1 + pad + 3) continue;
-    if (b.region && (x + X0 < b.region.x0 || x + X0 >= b.region.x1 || y + Y0 < b.region.y0 || y + Y0 >= b.region.y1)) continue;   // только внутри картинки
+    if (b.region && (x + X0 < b.region.x0 || x + X0 >= b.region.x1 || y + Y0 < b.region.y0 || y + Y0 >= b.region.y1)) continue;
     const i = (y * w + x) * 4; ring.push([d[i], d[i + 1], d[i + 2]]);
   }
   if (!ring.length) ring.push([255, 255, 255]);
-  // самые частые цвета кольца: если 1–2 сплошных цвета (фон + столбик/линия) — фон «однотонный»
   const bins = new Map();
   for (const p of ring) { const key = (p[0] >> 4) << 8 | (p[1] >> 4) << 4 | (p[2] >> 4); const e = bins.get(key); if (e) { e.n++; e.s[0] += p[0]; e.s[1] += p[1]; e.s[2] += p[2]; } else bins.set(key, { n: 1, s: [p[0], p[1], p[2]] }); }
   const top = Array.from(bins.values()).sort((a, b2) => b2.n - a.n);
   const t1 = top[0], t2 = top[1] || { n: 0 };
-  // соседние ячейки гистограммы (цвет на границе ячеек) считаем одним цветом
   const c1 = t1.s.map(v => v / t1.n), c2 = t2.n ? t2.s.map(v => v / t2.n) : c1;
   const share1 = ring.filter(p => dist(p, c1) < 14).length / ring.length;
   const share12 = ring.filter(p => dist(p, c1) < 14 || dist(p, c2) < 14).length / ring.length;
@@ -592,7 +555,6 @@ function analyzeBlock(ctx, b, W, H) {
   if (share1 > 0.5 && share12 > 0.88) bgVar = 0;
   else { bg = [0, 1, 2].map(k => median(ring.map(p => p[k]))); bgVar = Math.max(10, ring.reduce((a, p) => a + Math.min(120, dist(p, bg)), 0) / ring.length); }
   b.bg = bg; b.bgVar = bgVar;
-  // маска букв: пиксели, заметно светлее/темнее локального фона
   const lum = new Float32Array(w * h);
   for (let i = 0; i < w * h; i++) lum[i] = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11;
   const W1 = w + 1, I = new Float64Array(W1 * (h + 1));
@@ -612,10 +574,8 @@ function analyzeBlock(ctx, b, W, H) {
       isIn ? nIn++ : nOut++;
     }
   }
-  // однотонный фон: буквы = всё, что далеко от цвета фона
   let mode = b.mode;
   if (!mode) {
-    // буквы — это «выбросы» за пределы яркостей окружающего фона: смотрим, каких больше, светлых или тёмных
     const rl = []; for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) { if (x >= ix0 && x <= ix1 && y >= iy0 && y <= iy1) continue; rl.push(lum[y * w + x]); }
     rl.sort((p, q) => p - q);
     const lo = rl[Math.floor(rl.length * 0.03)] || 0, hi = rl[Math.floor(rl.length * 0.97)] || 255;
@@ -629,7 +589,6 @@ function analyzeBlock(ctx, b, W, H) {
   const mask = mode === 'light' ? light : dark;
   if (bgVar < 10) for (let i = 0; i < w * h; i++) mask[i] = dist([d[i * 4], d[i * 4 + 1], d[i * 4 + 2]], bg) > 50 ? 1 : 0;
   b._uniformRefine = bgVar < 10;
-  // цвет текста: самые «сильные» пиксели маски внутри блока
   const cand = [];
   for (let y = Math.max(0, Math.floor(iy0)); y < Math.min(h, Math.ceil(iy1)); y++) for (let x = Math.max(0, Math.floor(ix0)); x < Math.min(w, Math.ceil(ix1)); x++) {
     const i = y * w + x; if (!mask[i]) continue;
@@ -642,7 +601,7 @@ function analyzeBlock(ctx, b, W, H) {
     fg = [0, 1, 2].map(k => top.reduce((a, p) => a + p[k], 0) / top.length);
   } else { const l = bg[0] * 0.3 + bg[1] * 0.59 + bg[2] * 0.11; fg = l > 140 ? [20, 20, 20] : [245, 245, 245]; }
   b.fg = fg;
-  if (b._uniformRefine) {      // на однотонном фоне буквы — это пиксели цвета текста, а не любые «не фоновые» (линии, столбики)
+  if (b._uniformRefine) {
     const lim = Math.max(90, 0.45 * dist(fg, bg));
     for (let i = 0; i < w * h; i++) if (mask[i] && dist([d[i * 4], d[i * 4 + 1], d[i * 4 + 2]], fg) > lim) mask[i] = 0;
   }
@@ -651,19 +610,15 @@ function analyzeBlock(ctx, b, W, H) {
   b._m = { X0, Y0, w, h, mask };
 }
 
-// Стирание: однотонный фон — заливка; сложный фон (градиент, фото) — закрашиваем только буквы,
-// подбирая цвет из соседних пикселей фона (нормированное размытие)
 function eraseBlock(ctx, b, W, H) {
   const pad = Math.ceil(b.size * (b.ocr ? 0.14 : 0.16)) + 2, padX = b.ocr ? Math.ceil(b.size * 0.45) + 2 : pad;
   const { X0, Y0, w, h, mask } = b._m;
   const uniform = b.bgVar < 10;
   const img = ctx.getImageData(X0, Y0, w, h), d = img.data;
-  // ограничиваем маску областью блока и расширяем её (антиалиасинг букв)
-  // «семена» маски — только внутри рамки текста (+2px), дальше их расширяем на rr
   const sm = b.ocr ? 3 : 2;
   const sx = b.ocr && !uniform ? padX * 0.5 : sm;
   let bx0 = Math.floor(b.x0 - X0 - sx), bx1 = Math.ceil(b.x1 - X0 + sx), by0 = Math.floor(b.y0 - Y0 - sm), by1 = Math.ceil(b.y1 - Y0 + sm);
-  if (b.region) {           // не выходим за пределы картинки
+  if (b.region) {
     bx0 = Math.max(bx0, Math.ceil(b.region.x0 - X0)); bx1 = Math.min(bx1, Math.floor(b.region.x1 - X0));
     by0 = Math.max(by0, Math.ceil(b.region.y0 - Y0)); by1 = Math.min(by1, Math.floor(b.region.y1 - Y0));
   }
@@ -677,18 +632,16 @@ function eraseBlock(ctx, b, W, H) {
   if (b.region) for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     if (x + X0 < b.region.x0 || x + X0 >= b.region.x1 || y + Y0 < b.region.y0 || y + Y0 >= b.region.y1) m[y * w + x] = 0;
   }
-  if (uniform) {            // однотонный фон: закрашиваем буквы цветом фона, соседние линии и фигуры не трогаем
+  if (uniform) {
     for (let i = 0; i < w * h; i++) if (m[i]) { d[i * 4] = b.bg[0]; d[i * 4 + 1] = b.bg[1]; d[i * 4 + 2] = b.bg[2]; }
     ctx.putImageData(img, X0, Y0); return;
   }
-  // пиксели рядом с буквами (ореол сглаживания) не берём как образец фона
   const far = new Uint8Array(w * h); const r2 = rr + 1;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     if (!m[y * w + x]) continue;
     for (let dy = -r2; dy <= r2; dy += 1) { const yy = y + dy; if (yy < 0 || yy >= h) continue;
       for (let dx = -r2; dx <= r2; dx += 1) { const xx = x + dx; if (xx >= 0 && xx < w) far[yy * w + xx] = 1; } }
   }
-  // «push-pull»: строим пирамиду из известных пикселей фона и плавно заполняем дыру сверху вниз
   let lw = w, lh = h;
   let C = new Float32Array(w * h * 3), Wt = new Float32Array(w * h);
   for (let i = 0; i < w * h; i++) if (!far[i]) { C[i * 3] = d[i * 4]; C[i * 3 + 1] = d[i * 4 + 1]; C[i * 3 + 2] = d[i * 4 + 2]; Wt[i] = 1; }
@@ -709,7 +662,6 @@ function eraseBlock(ctx, b, W, H) {
     const cur = levels[L], up = levels[L + 1];
     for (let y = 0; y < cur.h; y++) for (let x = 0; x < cur.w; x++) {
       const i = y * cur.w + x; if (cur.Wt[i] >= 1) continue;
-      // билинейно из уровня выше
       const fx = Math.min(up.w - 1, Math.max(0, (x - 0.5) / 2)), fy = Math.min(up.h - 1, Math.max(0, (y - 0.5) / 2));
       const x0 = Math.floor(fx), y0 = Math.floor(fy), x1 = Math.min(up.w - 1, x0 + 1), y1 = Math.min(up.h - 1, y0 + 1), tx = fx - x0, ty = fy - y0;
       const wt = cur.Wt[i];
@@ -722,11 +674,9 @@ function eraseBlock(ctx, b, W, H) {
     }
   }
   const F = levels[0].C;
-  // зерно: стандартное отклонение яркости фона вокруг блока
   let ss = 0, s2 = 0, nn = 0;
   for (let i = 0; i < w * h; i += 3) if (!far[i]) { const l = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11; ss += l; s2 += l * l; nn++; }
   const grainBase = nn ? Math.sqrt(Math.max(0, s2 / nn - (ss / nn) ** 2)) : 0;
-  // локальное зерно ≈ разница пикселя и его сглаженной версии; берём долю от общего разброса
   const grain = Math.min(14, grainBase * 0.18);
   for (let i = 0; i < w * h; i++) {
     if (!m[i]) continue;
@@ -741,7 +691,7 @@ function wrapText(ctx, text, maxW) {
   for (let w of words) {
     const test = cur ? cur + ' ' + w : w;
     if (ctx.measureText(test).width <= maxW || !cur) {
-      if (!cur && ctx.measureText(w).width > maxW) {      // очень длинное слово
+      if (!cur && ctx.measureText(w).width > maxW) {
         let part = '';
         for (const ch of w) { if (ctx.measureText(part + ch).width > maxW && part) { lines.push(part); part = ch; } else part += ch; }
         cur = part; continue;
@@ -753,12 +703,14 @@ function wrapText(ctx, text, maxW) {
   return lines;
 }
 
+// МАЛЮВАННЯ ТЕКСТУ ЗІ СТРОГИМИ МЕЖАМИ
 function drawBlock(ctx, b, text, W, H) {
   const weight = b.bold ? '700' : '400', style = b.italic ? 'italic ' : '';
   const origW = b.x1 - b.x0, origH = b.y1 - b.y0;
-  // сколько места можно занять вправо: до края картинки / страницы
   const limitR = b.region ? b.region.x1 - 4 : W - Math.max(12, W * 0.03);
   const limitL = b.region ? b.region.x0 + 4 : Math.max(12, W * 0.03);
+  const limitB = b.region ? b.region.y1 - 4 : H - 4; // Сувора нижня межа
+
   let maxW = origW;
   if (b.lines.length === 1) {
     const grow = b.ocr ? 1.9 : 1.35;
@@ -766,32 +718,45 @@ function drawBlock(ctx, b, text, W, H) {
     else maxW = Math.min(origW * grow, limitR - b.x0);
     maxW = Math.max(maxW, origW);
   }
-  const pitchK = clamp(b.pitch / b.size, 1.05, 1.6);
+  
   let size = b.size * 0.9, lines;
-  const minSize = b.size * 0.5;
-  for (let i = 0; i < 40; i++) {
+  let pitchK = clamp(b.pitch / b.size, 1.05, 1.6);
+  const minSize = 4; // Мінімальний можливий розмір
+  let firstBase = 0;
+
+  for (let i = 0; i < 60; i++) {
     ctx.font = `${style}${weight} ${size}px ${FONT}`;
     lines = wrapText(ctx, text, maxW);
-    const hh = size + (lines.length - 1) * size * pitchK;
-    const allowH = Math.max(origH * 1.08, b.size * 1.1) + (b.ocr && b.lines.length === 1 ? b.size * 1.2 : 0);
-    const tooMany = b.lines.length === 1 && lines.length > 1 && size > b.size * (b.ocr ? 0.8 : 0.72);
-    if ((hh <= allowH && !tooMany) || size <= minSize) break;
-    size *= 0.95;
+    
+    firstBase = b.lines[0].base;
+    let bottom = firstBase + (lines.length - 1) * size * pitchK + size * 0.25;
+    
+    // Якщо текст вилазить вниз — пробуємо посунути його вгору
+    if (bottom > limitB) {
+      const shift = bottom - limitB;
+      const limitT = b.region ? b.region.y0 + 4 : 4;
+      const top = firstBase - size;
+      if (top - shift >= limitT) {
+        firstBase -= shift;
+        bottom -= shift;
+      }
+    }
+    
+    // Якщо вліз або шрифт вже крихітний — зупиняємось
+    if (bottom <= limitB || size <= minSize) break;
+    size *= 0.95; 
   }
+
   ctx.fillStyle = rgb(b.fg); ctx.textBaseline = 'alphabetic';
   ctx.textAlign = b.align;
   const x = b.align === 'center' ? (b.x0 + b.x1) / 2 : b.align === 'right' ? b.x1 : b.x0;
-  // первая базовая линия — как у оригинала (но так, чтобы текст не вылез вверх)
-  const firstBase = Math.max(b.lines[0].base - (b.size - size) * 0.5, b.y0 + size * 0.8);
+  
   let maxLineW = 0;
   lines.forEach((ln, i) => { ctx.fillText(ln, x, firstBase + i * size * pitchK); maxLineW = Math.max(maxLineW, ctx.measureText(ln).width); });
   const bx0 = b.align === 'center' ? x - maxLineW / 2 : b.align === 'right' ? x - maxLineW : x;
   return { x0: Math.min(b.x0, bx0), y0: b.y0, x1: Math.max(b.x1, bx0 + maxLineW), y1: Math.max(b.y1, firstBase + (lines.length - 1) * size * pitchK + size * 0.25) };
 }
 
-/* =====================================================================
-   3. ОБРАБОТКА СТРАНИЦЫ (общая для PDF и картинок)
-   ===================================================================== */
 async function translatePageCanvas(src, blocks, opts) {
   const W = src.width, H = src.height;
   const ctx = src.getContext('2d', { willReadFrequently: true });
@@ -799,8 +764,6 @@ async function translatePageCanvas(src, blocks, opts) {
   const out = { blocks: [] };
   if (!blocks.length) return out;
   blocks.forEach(b => analyzeBlock(ctx, b, W, H));
-  // Текст на фото/неоднородном фоне принимаем только если он «настоящий»: длинный и уверенно распознан.
-  // Иначе блики и узоры превращаются в слова вроде «ANS OM».
   blocks = blocks.filter(b => {
     if (!b.ocr) return true;
     const letters = (b.text.match(/\p{L}/gu) || []).length;
@@ -814,7 +777,6 @@ async function translatePageCanvas(src, blocks, opts) {
   if (opts.onStage) opts.onStage('translate');
   const tr = await translateTexts(blocks.map(b => b.text), context);
   if (opts.onStage) opts.onStage('paint');
-  // сначала стираем всё, потом пишем (чтобы соседние блоки не затирали друг друга)
   const todo = blocks.map((b, i) => ({ b, t: (tr[i] || '').trim() })).filter(x => x.t && x.t.replace(/\s/g, '') !== x.b.text.replace(/\s/g, ''));
   todo.forEach(x => eraseBlock(ctx, x.b, W, H));
   blocks.forEach(b => { b._m = null; });
@@ -831,14 +793,12 @@ async function ocrBlocksFor(canvas, regions, avoid, onOcrLoad) {
     const got = await ocrRegion(canvas, r, 11, onOcrLoad);
     lines = lines.concat(got);
   }
-  // убираем то, что уже есть как векторный текст
   lines = lines.filter(l => !avoid.some(a => interArea(a, l.top !== undefined ? { x0: l.x0, x1: l.x1, y0: l.top, y1: l.bot } : l) > 0.3 * (l.x1 - l.x0) * (l.bot - l.top)));
   const blocks = linesToBlocks(lines, { gap: 0.7, align: 0.9 });
   blocks.forEach(b => { b.ocr = true; b.region = b.lines[0].region; b.bold = undefined; b.mode = b.lines[0].mode; });
   return blocks;
 }
 
-/* ---------- PDF ---------- */
 async function processPdf(buf, ui) {
   const pdfjs = await getPdfjs();
   const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf), isEvalSupported: false, useSystemFonts: true }).promise;
@@ -869,7 +829,6 @@ async function processPdf(buf, ui) {
     page.cleanup();
     const svBlob = await canvasToBlob(canvas, 'image/jpeg', 0.8);
     const blocks = vblocks.concat(oblocks);
-    // перевод и рисование идут параллельно с чтением следующих страниц
     const job = (async () => {
       const res = await translatePageCanvas(canvas, blocks, { onStage: s => ui.stage(i, s) });
       const ukBlob = res.blocks.length ? await canvasToBlob(canvas, 'image/jpeg', 0.86) : svBlob;
@@ -884,7 +843,6 @@ async function processPdf(buf, ui) {
   return pages;
 }
 
-/* ---------- картинка ---------- */
 async function loadImage(blob) {
   const url = URL.createObjectURL(blob);
   try {
@@ -894,7 +852,6 @@ async function loadImage(blob) {
 async function processImageBlob(blob, ui, i, keepSize, context) {
   const img = await loadImage(blob);
   let w = img.naturalWidth, h = img.naturalHeight;
-  // маленькие картинки увеличиваем: OCR и новый текст получаются чище
   const k = keepSize ? clamp(1800 / Math.max(w, h), 1, 2.5) : Math.min(1, 2400 / Math.max(w, h));
   const canvas = makeCanvas(w * k, h * k); const ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -913,9 +870,6 @@ async function processImage(file, ui) {
   return [page];
 }
 
-/* =====================================================================
-   4. PPTX / DOCX: перевод внутри файла
-   ===================================================================== */
 const OFFICE = {
   pptx: { parts: /^ppt\/(slides\/slide\d+|diagrams\/(data|drawing)\d+|charts\/chart\d+|notesSlides\/notesSlide\d+)\.xml$/, ns: 'http://schemas.openxmlformats.org/drawingml/2006/main', p: 'p', r: 'r', t: 't', br: 'br', rPr: 'rPr', media: /^ppt\/media\/[^/]+\.(png|jpe?g)$/i },
   docx: { parts: /^word\/(document|header\d+|footer\d+|footnotes|endnotes)\.xml$/, ns: 'http://schemas.openxmlformats.org/wordprocessingml/2006/main', p: 'p', r: 'r', t: 't', br: 'br', rPr: 'rPr', media: /^word\/media\/[^/]+\.(png|jpe?g)$/i }
@@ -926,7 +880,6 @@ function officeParagraphs(doc, cfg) {
   const ps = Array.from(doc.getElementsByTagNameNS(cfg.ns, cfg.p));
   const out = [];
   for (const p of ps) {
-    // руны текста в порядке документа (включая руны внутри гиперссылок docx)
     const runs = Array.from(p.getElementsByTagNameNS(cfg.ns, cfg.r)).filter(r => {
       let a = r.parentNode; while (a && a !== p) { if (a.localName === cfg.p) return false; a = a.parentNode; } return true;
     });
@@ -937,7 +890,6 @@ function officeParagraphs(doc, cfg) {
   }
   return out;
 }
-// Подпись, разбитая на строки абзацами («Endoplasmatiskt» / «nätverk»), переводится как одна фраза
 function mergeLabelParagraphs(pars) {
   const bodyOf = n => { while (n && n.localName !== 'txBody') n = n.parentNode; return n; };
   const out = []; let i = 0;
@@ -970,7 +922,6 @@ function applyTranslation(par, translated, simple) {
     (par.merged || []).forEach(m => m.p.parentNode && m.p.parentNode.removeChild(m.p));
     return;
   }
-  // разбираем <rN>...</rN>; текст вне тегов прибавляем к предыдущему фрагменту
   const pieces = new Array(parts.length).fill(''); let last = 0;
   const re = /<r(\d+)>([\s\S]*?)<\/r\1>|([^<]+)|<[^>]*>/g; let m;
   while ((m = re.exec(translated))) {
@@ -980,7 +931,6 @@ function applyTranslation(par, translated, simple) {
   const unesc = s => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
   parts.forEach((x, k) => setText(x, unesc(pieces[k])));
 }
-// Подгонка: считаем, сколько места займёт перевод в рамке, и уменьшаем размер шрифта в XML.
 let _mctx = null;
 function textWidthPt(text, sizePt, bold) {
   if (!_mctx) _mctx = makeCanvas(10, 10).getContext('2d');
@@ -997,7 +947,7 @@ function fitPptxBodies(doc, cfg, bodies) {
     const bodyPr = Array.from(body.childNodes).find(n => n.localName === 'bodyPr');
     const rPrs = Array.from(body.getElementsByTagNameNS(A, 'rPr')).concat(Array.from(body.getElementsByTagNameNS(A, 'endParaRPr')));
     const sizes = rPrs.map(r => +r.getAttribute('sz') || 0).filter(Boolean);
-    if (!ext || !sizes.length) {                 // размер рамки/шрифта неизвестен (наследуется от макета) — просим PowerPoint ужать сам
+    if (!ext || !sizes.length) {
       if (bodyPr) {
         Array.from(bodyPr.childNodes).forEach(n => { if (/^(noAutofit|spAutoFit|normAutofit)$/.test(n.localName)) bodyPr.removeChild(n); });
         bodyPr.insertBefore(doc.createElementNS(A, 'a:normAutofit'), bodyPr.firstChild);
@@ -1022,19 +972,15 @@ function fitPptxBodies(doc, cfg, bodies) {
         if (!p.text.trim()) { h += s * 1.2; continue; }
         const longest = Math.max(...p.text.split(/\s+/).map(w => textWidthPt(w, s, p.bold)));
         if (longest > W * 1.02) wordOk = false;
-        // перенос по словам
         let lines = 1, cur = 0; const sp = textWidthPt(' ', s, p.bold);
         for (const w of p.text.split(/\s+/).filter(Boolean)) { const ww = textWidthPt(w, s, p.bold); if (cur && cur + sp + ww > W) { lines++; cur = ww; } else cur += (cur ? sp : 0) + ww; }
         h += lines * s * 1.2;
       }
       return { h, wordOk };
     };
-    // однострочная подпись (рамка высотой в одну строку): не переносим на вторую строку — она налезет на соседей.
-    // Уменьшаем шрифт максимум до 75 %, а если всё равно не влезает — разрешаем строке выйти вбок.
     const maxSz = Math.max(...paras.map(p => p.sz));
     if (paras.length === 1 && H < maxSz * 1.2 * 1.6) {
       const p = paras[0], w = textWidthPt(p.text, p.sz, p.bold);
-      // запас 15 %: у учителя может не быть шрифта презентации, замена обычно шире
       let f1 = Math.max(0.75, Math.min(1, W * 0.85 / Math.max(1, w)));
       if (f1 < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f1 / 50) * 50))); });
       if (w * f1 > W * 0.85 && bodyPr) bodyPr.setAttribute('wrap', 'none');
@@ -1045,7 +991,6 @@ function fitPptxBodies(doc, cfg, bodies) {
     for (let k = 0; k < 30; k++) { const r = need(f); if (r.wordOk && r.h <= allow) break; f *= 0.95; if (f < 0.5) { f = 0.5; break; } }
     if (f < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f / 50) * 50))); });
     else continue;
-    // runs без явного размера получают размер явно
     Array.from(body.getElementsByTagNameNS(A, 'r')).forEach(r => {
       let rp = Array.from(r.childNodes).find(n => n.localName === 'rPr');
       if (!rp) { rp = doc.createElementNS(A, 'a:rPr'); r.insertBefore(rp, r.firstChild); }
@@ -1062,7 +1007,6 @@ async function processOffice(file, kind, ui) {
   const media = names.filter(n => cfg.media.test(n));
   ui.total(xmlNames.length + media.length);
   let step = 0, allText = '';
-  // текст: каждая часть (слайд) — один запрос с контекстом всего слайда
   for (const name of xmlNames) {
     if (ui.cancelled()) throw new Error('cancelled');
     step++; ui.stage(step, 'translate');
@@ -1085,7 +1029,6 @@ async function processOffice(file, kind, ui) {
       if (plainIdx.length) {
         const again = await translateTexts(plainIdx.map(i => escXml(pars[i].full)), context, true);
         plainIdx.forEach((i, k) => {
-          // весь абзац одним куском; форматирование берём от первого фрагмента
           const p = pars[i]; p.parts.slice(1).forEach(x => x.ts.forEach(t => t.textContent = ''));
           tr[i] = again[k]; tagged[i].simple = true; p.parts = [p.parts[0]];
         });
@@ -1102,7 +1045,6 @@ async function processOffice(file, kind, ui) {
     }
     ui.done(step);
   }
-  // картинки внутри файла
   for (const name of media) {
     if (ui.cancelled()) throw new Error('cancelled');
     step++; ui.stage(step, 'ocr');
@@ -1122,7 +1064,6 @@ async function processOffice(file, kind, ui) {
   return await zip.generateAsync({ type: 'blob', mimeType: mime, compression: 'DEFLATE' });
 }
 
-/* ---------- PDF для скачивания из картинок страниц ---------- */
 async function pagesToPdf(pages, getBlob) {
   await loadScript(CDN.jspdf);
   const { jsPDF } = window.jspdf;
@@ -1130,7 +1071,7 @@ async function pagesToPdf(pages, getBlob) {
   for (const p of pages) {
     const blob = await getBlob(p);
     const data = new Uint8Array(await blob.arrayBuffer());
-    const w = p.w * 0.75, h = p.h * 0.75;                // px → pt
+    const w = p.w * 0.75, h = p.h * 0.75;
     if (!pdf) pdf = new jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'pt', format: [w, h], compress: true });
     else pdf.addPage([w, h], w > h ? 'l' : 'p');
     pdf.addImage(data, 'JPEG', 0, 0, w, h, undefined, 'FAST');
@@ -1143,7 +1084,7 @@ window.Engine = { processPdf, processImage, processOffice, pagesToPdf, QuotaErro
 </script>
 <script>
 /* =====================================================================
-   ИНТЕРФЕЙС
+   ІНТЕРФЕЙС
    ===================================================================== */
 const $ = s => document.querySelector(s);
 const T = {
@@ -1155,11 +1096,11 @@ const T = {
     hashing: 'Перевіряю, чи вже перекладали цей файл', cached: 'Вже перекладено, відкриваю', saving: 'Зберігаю для класу… {i}/{n}',
     codeLabel: 'КОД ДЛЯ КЛАСУ', shareNote: 'Учні відкривають сайт і вводять цей код. Переклад відкриється одразу.', copy: 'Копіювати',
     copied: 'Скопійовано', notFound: 'Код не знайдено', noCloud: 'Коди ще не налаштовані на сервері',
-    unsupported: 'Цей формат поки не підтримується. Збережи файл як PDF.', keynote: 'Keynote: Файл → Експорт → PDF, потім завантаж PDF.',
+    unsupported: 'Цей формат поки не підтримується. Збережи файл як PDF.', keynote: 'Keynote: Файл -> Експорт -> PDF, потім завантаж PDF.',
     oldOffice: 'Старий формат. Збережи як .pptx/.docx або PDF.', quota: 'Ліміт перекладів на цей місяць вичерпано. Спробуй пізніше.',
     net: 'Немає зв’язку з сервером. Перевір інтернет.', fail: 'Щось пішло не так. Спробуй ще раз або збережи файл як PDF.',
     tooBig: 'Файл завеликий (макс. 80 МБ).', tapHint: 'Натисни на текст — побачиш оригінал', savingShort: 'Зберігаю…',
-    officeNoCloud: 'Переклад готовий. Завантаж файл, щоб відкрити його.', original: 'ОРИГІНАЛ', translation: 'ПЕРЕКЛАД',
+    officeNoCloud: 'Переклад готовий, завантаж файл і відкрий у Google Slides', original: 'ОРИГІНАЛ', translation: 'ПЕРЕКЛАД',
     pagesWord: 'стор.', wait: 'Зачекай, переклад ще зберігається'
   },
   sv: {
@@ -1170,11 +1111,11 @@ const T = {
     hashing: 'Kollar om filen redan är översatt', cached: 'Redan översatt, öppnar', saving: 'Sparar för klassen… {i}/{n}',
     codeLabel: 'KOD FÖR KLASSEN', shareNote: 'Eleverna öppnar sidan och skriver koden. Översättningen öppnas direkt.', copy: 'Kopiera',
     copied: 'Kopierat', notFound: 'Koden finns inte', noCloud: 'Koder är inte inställda på servern än',
-    unsupported: 'Formatet stöds inte än. Spara filen som PDF.', keynote: 'Keynote: Arkiv → Exportera → PDF, ladda sedan upp PDF:en.',
+    unsupported: 'Formatet stöds inte än. Spara filen som PDF.', keynote: 'Keynote: Arkiv -> Exportera -> PDF, ladda sedan upp PDF:en.',
     oldOffice: 'Gammalt format. Spara som .pptx/.docx eller PDF.', quota: 'Månadens översättningskvot är slut. Försök senare.',
     net: 'Ingen kontakt med servern. Kolla internet.', fail: 'Något gick fel. Försök igen eller spara filen som PDF.',
     tooBig: 'Filen är för stor (max 80 MB).', tapHint: 'Tryck på texten för att se originalet', savingShort: 'Sparar…',
-    officeNoCloud: 'Översättningen är klar. Ladda ner filen för att öppna den.', original: 'ORIGINAL', translation: 'ÖVERSÄTTNING',
+    officeNoCloud: 'Översättningen är klar, ladda ner filen och öppna i Google Slides', original: 'ORIGINAL', translation: 'ÖVERSÄTTNING',
     pagesWord: 'sid.', wait: 'Vänta, översättningen sparas fortfarande'
   }
 };
@@ -1190,7 +1131,6 @@ document.querySelectorAll('#lang button').forEach(b => b.onclick = () => { LANG 
 
 function show(id) { ['home', 'work', 'view'].forEach(s => $('#' + s).classList.toggle('hidden', s !== id)); $('#scene').classList.toggle('hidden', id === 'view'); $('#lang').classList.toggle('hidden', id === 'view'); }
 
-/* ---------- звёзды ---------- */
 (function stars() {
   const box = $('#stars'); let h = '';
   for (let i = 0; i < 46; i++) {
@@ -1200,7 +1140,6 @@ function show(id) { ['home', 'work', 'view'].forEach(s => $('#' + s).classList.t
   box.innerHTML = h;
 })();
 
-/* ---------- облако (коды) ---------- */
 let CLOUD = null;
 async function cloudOn() {
   if (CLOUD !== null) return CLOUD;
@@ -1215,7 +1154,6 @@ async function uploadBlob(path, blob) {
   return res.url;
 }
 
-/* ---------- недавние ---------- */
 function recentList() { try { return JSON.parse(localStorage.getItem('recent') || '[]'); } catch (e) { return []; } }
 function addRecent(meta) {
   const list = recentList().filter(r => r.code !== meta.code);
@@ -1231,7 +1169,6 @@ function renderRecent() {
 }
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/* ---------- главный экран ---------- */
 const fileInput = $('#file');
 $('#pick').onclick = () => fileInput.click();
 fileInput.onchange = () => { if (fileInput.files[0]) startFile(fileInput.files[0]); fileInput.value = ''; };
@@ -1258,7 +1195,6 @@ function fromMeta(meta) {
   return { title: meta.title, kind: meta.kind, code: meta.code, fileUrl: meta.file, pages: (meta.pages || []).map(p => ({ w: p.w, h: p.h, uk: p.uk, sv: p.sv, blocks: p.blocks || [] })) };
 }
 
-/* ---------- обработка файла ---------- */
 let job = null;
 function kindOf(f) {
   const n = (f.name || '').toLowerCase();
@@ -1326,9 +1262,13 @@ function drawBar(frac) {
 function setStage(a, b) { $('#w-stage').innerHTML = esc(a).replace(/…$/, '<span class="blink">…</span>'); $('#w-sub').textContent = b || ''; }
 function setSub(b) { $('#w-sub').textContent = b; }
 
-/* ---------- сохранение для класса ---------- */
 async function saveDoc(doc, hash) {
-  if (!(await cloudOn())) { doc.saving = false; updateShareBtn(); return; }
+  if (!(await cloudOn())) { 
+    doc.saving = false; 
+    updateShareBtn(); 
+    if (CUR === doc && (doc.kind === 'pptx' || doc.kind === 'docx')) showOffice(doc);
+    return; 
+  }
   try {
     const { code } = await (await fetch('/api/doc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'new' }) })).json();
     if (!code) throw new Error('code');
@@ -1351,14 +1291,19 @@ async function saveDoc(doc, hash) {
     if (!r.ok) throw new Error('finish');
     doc.code = code; doc.saving = false; doc.fileUrl = meta.file || doc.fileUrl;
     addRecent({ code, title: doc.title, pages: urls });
-    if (CUR === doc) { history.replaceState(null, '', '?d=' + code); if (doc.kind === 'pptx' || doc.kind === 'docx') showOffice(doc); }
-  } catch (e) { console.warn('save failed', e); doc.saving = false; doc.saveFailed = true; }
+    if (CUR === doc) { 
+      history.replaceState(null, '', '?d=' + code); 
+      if (doc.kind === 'pptx' || doc.kind === 'docx') showOffice(doc); 
+    }
+  } catch (e) { 
+    console.warn('save failed', e); 
+    doc.saving = false; 
+    doc.saveFailed = true; 
+    if (CUR === doc && (doc.kind === 'pptx' || doc.kind === 'docx')) showOffice(doc);
+  }
   updateShareBtn();
 }
 
-/* =====================================================================
-   ПРОСМОТР
-   ===================================================================== */
 let CUR = null, IDX = 0, MODE = 'uk';
 function openViewer(doc) {
   CUR = doc; IDX = 0; MODE = 'uk';
@@ -1391,7 +1336,6 @@ function buildPages(doc) {
 }
 function pageSrc(p) { return MODE === 'uk' ? p.uk : p.sv; }
 function loadAround() {
-  // грузим текущую и соседние страницы (экономим память айпада)
   document.querySelectorAll('#v-pages .pg').forEach(pg => {
     const i = +pg.dataset.i, img = pg.querySelector('img'), p = CUR.pages[i];
     if (Math.abs(i - IDX) <= 2) {
@@ -1427,7 +1371,6 @@ document.addEventListener('keydown', e => {
   else if (e.key.toLowerCase() === 'o' || e.key === 'Tab') { e.preventDefault(); setMode(MODE === 'uk' ? 'sv' : 'uk'); }
   else if (e.key === 'Escape') hideTip();
 });
-// свайп
 (function swipe() {
   const st = $('#v-stage'); let sx = 0, sy = 0, t0 = 0, multi = false;
   st.addEventListener('touchstart', e => { multi = e.touches.length > 1; sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now(); }, { passive: true });
@@ -1437,7 +1380,6 @@ document.addEventListener('keydown', e => {
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - t0 < 700) goto(IDX + (dx < 0 ? 1 : -1));
   }, { passive: true });
 })();
-// нажатие на текст → оригинал
 const tip = $('#tip');
 $('#v-pages').addEventListener('click', e => {
   const hit = e.target.closest('.hot i');
@@ -1453,7 +1395,6 @@ $('#v-pages').addEventListener('click', e => {
 });
 function hideTip() { tip.classList.add('hidden'); }
 
-/* ---------- скачать ---------- */
 $('#v-dl').onclick = async () => {
   if (!CUR) return;
   const btn = $('#v-dl'); btn.disabled = true;
@@ -1472,7 +1413,6 @@ function saveAs(blob, name) {
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
 }
 
-/* ---------- поделиться ---------- */
 function updateShareBtn() {
   const b = $('#v-share'); if (!CUR) return;
   b.classList.toggle('hidden', !CUR.code && !CUR.saving);
@@ -1492,7 +1432,6 @@ $('#s-copy').onclick = async () => {
   try { await navigator.clipboard.writeText(location.origin + location.pathname + '?d=' + CUR.code); $('#s-copy').textContent = t('copied'); setTimeout(() => $('#s-copy').textContent = t('copy'), 1500); } catch (e) {}
 };
 
-/* ---------- старт ---------- */
 applyLang();
 (function boot() {
   const d = new URLSearchParams(location.search).get('d');
