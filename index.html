@@ -1078,17 +1078,10 @@ function fitPptxBodies(doc, cfg, bodies) {
       }
       return { h, wordOk };
     };
-    const maxSz = Math.max(...paras.map(p => p.sz));
-    if (paras.length === 1 && H < maxSz * 1.2 * 1.6) {
-      const p = paras[0], w = textWidthPt(p.text, p.sz, p.bold);
-      let f1 = Math.max(0.75, Math.min(1, W * 0.85 / Math.max(1, w)));
-      if (f1 < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f1 / 50) * 50))); });
-      if (w * f1 > W * 0.85 && bodyPr) bodyPr.setAttribute('wrap', 'none');
-      continue;
-    }
-    const allow = Math.max(H, need(1).h > H ? Math.min(need(1).h, H * 1.25) : H) * 1.04;
+
+    const allow = H * 1.02; // Жорсткий ліміт на висоту, щоб текст не вилазив за краї
     let f = 1;
-    for (let k = 0; k < 30; k++) { const r = need(f); if (r.wordOk && r.h <= allow) break; f *= 0.95; if (f < 0.5) { f = 0.5; break; } }
+    for (let k = 0; k < 40; k++) { const r = need(f); if (r.wordOk && r.h <= allow) break; f *= 0.95; if (f < 0.3) { f = 0.3; break; } }
     if (f < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f / 50) * 50))); });
     else continue;
     Array.from(body.getElementsByTagNameNS(A, 'r')).forEach(r => {
@@ -1196,7 +1189,7 @@ window.Engine = { processPdf, processImage, processOffice, pagesToPdf, QuotaErro
 const $ = s => document.querySelector(s);
 const T = {
   uk: {
-    upload: 'Завантажити файл', drop: 'або перетягни файл сюди', orCode: 'або введи код від учителя', open: 'Відкрити',
+    upload: 'Завантажити файл', drop: 'презентацію', orCode: 'дивитись з кімто по коду', open: 'Відкрити',
     recent: 'Нещодавні', cancel: 'Скасувати', share: 'Код', download: 'PDF', dlPres: 'Скачати презентацію', dlDoc: 'Скачати документ', downloadFile: 'Завантажити',
     read: 'Читаю сторінку', ocr: 'Шукаю текст на картинках', translate: 'Перекладаю', paint: 'Малюю переклад',
     page: 'Сторінка {i} з {n}', part: 'Частина {i} з {n}', ocrLoad: 'Завантажую розпізнавання тексту… {p}%',
