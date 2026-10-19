@@ -269,6 +269,11 @@ async function ocrCanvas(canvas, psm, onProgress) {
 /* ---------- утилиты ---------- */
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function makeCanvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function rotateCanvas(c, deg) {
+  const out = makeCanvas(c.height, c.width), x = out.getContext('2d', { willReadFrequently: true });
+  if (deg > 0) { x.translate(out.width, 0); x.rotate(Math.PI / 2); } else { x.translate(0, out.height); x.rotate(-Math.PI / 2); }
+  x.drawImage(c, 0, 0); return out;
+}
 function canvasToBlob(c, type, q) { return new Promise(ok => c.toBlob(b => ok(b), type || 'image/jpeg', q || 0.86)); }
 function freeCanvas(c) { if (c) { c.width = 1; c.height = 1; } }
 const dist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
@@ -856,9 +861,35 @@ async function processImageBlob(blob, ui, i, keepSize, context) {
   const canvas = makeCanvas(w * k, h * k); const ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   if (ui) ui.stage(i, 'ocr');
-  const blocks = await ocrBlocksFor(canvas, [{ x0: 0, y0: 0, x1: canvas.width, y1: canvas.height }], [], p => ui && ui.ocrLoad(p));
+  const full = c => [{ x0: 0, y0: 0, x1: c.width, y1: c.height }];
+  const orig = keepSize ? makeCanvas(canvas.width, canvas.height) : null;
+  if (orig) orig.getContext('2d').drawImage(canvas, 0, 0);
+  const blocks = await ocrBlocksFor(canvas, full(canvas), [], p => ui && ui.ocrLoad(p));
   const svBlob = keepSize ? null : await canvasToBlob(canvas, 'image/jpeg', 0.8);
-  const res = await translatePageCanvas(canvas, blocks, { onStage: s => ui && ui.stage(i, s), context });
+  let res = await translatePageCanvas(canvas, blocks, { onStage: s => ui && ui.stage(i, s), context });
+  if (orig) {
+    // текст на схемах часто повернутий на 90° — пробуємо обидва напрямки, якщо горизонтального тексту майже нема
+    if (res.blocks.length < 2) {
+      const score = bl => bl.reduce((a, b) => a + (b.text.match(/\p{L}/gu) || []).length, 0);
+      let best = null;
+      for (const deg of [90, -90]) {
+        const r = rotateCanvas(orig, deg);
+        const bl = await ocrBlocksFor(r, full(r), [], null);
+        const sc = score(bl);
+        if (!best || sc > best.sc) { if (best) freeCanvas(best.r); best = { r, bl, sc, deg }; } else freeCanvas(r);
+      }
+      if (best && best.sc >= 12) {
+        const r2 = await translatePageCanvas(best.r, best.bl, { onStage: s => ui && ui.stage(i, s), context });
+        if (r2.blocks.length > res.blocks.length) {
+          const back = rotateCanvas(best.r, -best.deg);
+          const cx = canvas.getContext('2d'); cx.clearRect(0, 0, canvas.width, canvas.height); cx.drawImage(back, 0, 0, canvas.width, canvas.height);
+          freeCanvas(back); res = { blocks: r2.blocks.map(b => ({ ...b })) };
+        }
+      }
+      if (best) freeCanvas(best.r);
+    }
+    freeCanvas(orig);
+  }
   return { canvas, svBlob, res };
 }
 async function processImage(file, ui) {
@@ -1052,7 +1083,7 @@ async function processOffice(file, kind, ui) {
       const data = await zip.file(name).async('blob');
       const typed = new Blob([data], { type: /\.png$/i.test(name) ? 'image/png' : 'image/jpeg' });
       const probe = await loadImage(typed);
-      if (probe.naturalWidth >= 160 && probe.naturalHeight >= 80 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
+      if (probe.naturalWidth >= 100 && probe.naturalHeight >= 60 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
         const { canvas, res } = await processImageBlob(typed, null, step, true, allText.slice(0, 2500));
         if (res.blocks.length) zip.file(name, await canvasToBlob(canvas, typed.type, 0.9));
         freeCanvas(canvas);
@@ -1090,7 +1121,7 @@ const $ = s => document.querySelector(s);
 const T = {
   uk: {
     upload: 'Завантажити файл', drop: 'або перетягни файл сюди', orCode: 'або введи код від учителя', open: 'Відкрити',
-    recent: 'Нещодавні', cancel: 'Скасувати', share: 'Код', download: 'PDF', downloadFile: 'Завантажити',
+    recent: 'Нещодавні', cancel: 'Скасувати', share: 'Код', download: 'PDF', dlPres: 'Скачати презентацію', dlDoc: 'Скачати документ', downloadFile: 'Завантажити',
     read: 'Читаю сторінку', ocr: 'Шукаю текст на картинках', translate: 'Перекладаю', paint: 'Малюю переклад',
     page: 'Сторінка {i} з {n}', part: 'Частина {i} з {n}', ocrLoad: 'Завантажую розпізнавання тексту… {p}%',
     hashing: 'Перевіряю, чи вже перекладали цей файл', cached: 'Вже перекладено, відкриваю', saving: 'Зберігаю для класу… {i}/{n}',
@@ -1105,7 +1136,7 @@ const T = {
   },
   sv: {
     upload: 'Ladda upp fil', drop: 'eller dra filen hit', orCode: 'eller skriv koden från läraren', open: 'Öppna',
-    recent: 'Senaste', cancel: 'Avbryt', share: 'Kod', download: 'PDF', downloadFile: 'Ladda ner',
+    recent: 'Senaste', cancel: 'Avbryt', share: 'Kod', download: 'PDF', dlPres: 'Ladda ner presentationen', dlDoc: 'Ladda ner dokumentet', downloadFile: 'Ladda ner',
     read: 'Läser sidan', ocr: 'Letar text i bilder', translate: 'Översätter', paint: 'Ritar översättningen',
     page: 'Sida {i} av {n}', part: 'Del {i} av {n}', ocrLoad: 'Laddar textigenkänning… {p}%',
     hashing: 'Kollar om filen redan är översatt', cached: 'Redan översatt, öppnar', saving: 'Sparar för klassen… {i}/{n}',
@@ -1311,6 +1342,7 @@ function openViewer(doc) {
   $('#v-title').textContent = doc.title || '';
   document.querySelectorAll('#v-mode button').forEach(b => b.classList.toggle('on', b.dataset.m === MODE));
   const office = doc.kind === 'pptx' || doc.kind === 'docx';
+  { const sp = $('#v-dl span'); sp.dataset.t = office ? (doc.kind === 'pptx' ? 'dlPres' : 'dlDoc') : 'download'; sp.textContent = t(sp.dataset.t); }
   $('#v-stage').classList.toggle('hidden', office);
   $('#v-mode').classList.toggle('hidden', office);
   ['#v-prev', '#v-next', '#v-count'].forEach(s => $(s).classList.toggle('hidden', office));
@@ -1320,10 +1352,48 @@ function openViewer(doc) {
   else buildPages(doc);
   updateShareBtn();
 }
+const FONT_ALT = { 'calibri': 'Carlito', 'cambria': 'Caladea', 'arial': 'Arimo', 'helvetica': 'Arimo', 'times new roman': 'Tinos', 'courier new': 'Cousine',
+  'segoe ui': 'Open Sans', 'verdana': 'Open Sans', 'tahoma': 'Open Sans', 'trebuchet ms': 'Fira Sans', 'century gothic': 'Didact Gothic', 'georgia': 'Gelasio',
+  'comic sans ms': 'Comic Neue', 'impact': 'Anton', 'garamond': 'EB Garamond', 'calibri light': 'Carlito', 'arial narrow': 'Arimo', 'franklin gothic book': 'Libre Franklin' };
+async function loadDocFonts(buf, kind) {
+  const names = new Set(); let main = '';
+  try {
+    if (!window.JSZip) await Engine.loadScript(Engine.CDN.jszip);
+    const z = await JSZip.loadAsync(buf);
+    const files = Object.keys(z.files).filter(n => /^(ppt\/(slides|slideLayouts|slideMasters|theme)\/[^/]+\.xml|word\/(document|styles|fontTable|theme\/theme1)\.xml)$/.test(n));
+    for (const n of files) {
+      const x = await z.file(n).async('string');
+      for (const m of x.matchAll(/<a:(?:latin|ea|cs)\s+typeface="([^"]+)"/g)) if (!m[1].startsWith('+') && !m[1].startsWith('#')) names.add(m[1]);
+      for (const m of x.matchAll(/w:ascii="([^"]+)"/g)) names.add(m[1]);
+      for (const m of x.matchAll(/<w:font w:name="([^"]+)"/g)) names.add(m[1]);
+      if (!main && /theme/.test(n)) { const mm = x.match(/<a:minorFont>\s*<a:latin\s+typeface="([^"]+)"/); if (mm) main = mm[1]; }
+    }
+  } catch (e) { console.warn('fonts scan', e); }
+  const list = [...names].filter(n => !/^(Symbol|Wingdings.*|Webdings|Segoe UI Emoji)$/i.test(n));
+  list.forEach(n => {
+    const fam = FONT_ALT[n.toLowerCase()] || n;
+    const id = 'gf-' + fam.replace(/\W/g, '');
+    if (document.getElementById(id)) return;
+    const l = document.createElement('link'); l.id = id; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(fam).replace(/%20/g, '+') + ':ital,wght@0,400;0,700;1,400;1,700&display=swap';
+    l.onerror = () => l.remove();
+    document.head.appendChild(l);
+  });
+  const stack = n => '"' + n + '"' + (FONT_ALT[n.toLowerCase()] ? ',"' + FONT_ALT[n.toLowerCase()] + '"' : '');
+  main = main || list[0] || 'Calibri';
+  return { main: stack(main) + ',Arial,Arimo,sans-serif', stack, names: list };
+}
+function applyDocFonts(box, fonts) {
+  box.querySelectorAll('[style*="font-family"]').forEach(el => {
+    const ff = el.style.fontFamily; if (!ff) return;
+    const first = ff.split(',')[0].replace(/["']/g, '').trim();
+    el.style.fontFamily = fonts.stack(first) + ',Arial,Arimo,sans-serif';
+  });
+}
 function showOffice(doc) {
   const frame = $('#v-office'), msg = $('#v-office-msg');
   let box = $('#v-render');
-  if (!box) { box = document.createElement('div'); box.id = 'v-render'; box.style.cssText = 'flex:1;width:100%;overflow:auto;background:#555;-webkit-overflow-scrolling:touch;'; frame.parentNode.insertBefore(box, frame); }
+  if (!box) { box = document.createElement('div'); box.id = 'v-render'; box.style.cssText = 'flex:1;width:100%;overflow:auto;background:#555;-webkit-overflow-scrolling:touch;font-family:Calibri,Carlito,Arial,Arimo,sans-serif;'; frame.parentNode.insertBefore(box, frame); }
   const src = doc.fileBlob || doc.fileUrl;
   if (!src) {
     box.classList.add('hidden'); frame.classList.add('hidden'); msg.classList.remove('hidden');
@@ -1338,6 +1408,8 @@ function showOffice(doc) {
       const blob = doc.fileBlob || await (await fetch(doc.fileUrl)).blob();
       const buf = await blob.arrayBuffer();
       box.innerHTML = '';
+      const fonts = await loadDocFonts(buf, doc.kind);
+      box.style.fontFamily = fonts.main;
       if (doc.kind === 'pptx') {
         if (!window.pptxPreview) await Engine.loadScript('https://cdn.jsdelivr.net/npm/pptx-preview@1.0.5/dist/pptx-preview.umd.js');
         const w = Math.min(box.clientWidth - 20, 1100) || 900;
@@ -1349,6 +1421,8 @@ function showOffice(doc) {
         if (!window.docx) await Engine.loadScript('https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js');
         await window.docx.renderAsync(buf, box, null, { inWrapper: true, ignoreWidth: false });
       }
+      try { await document.fonts.ready; } catch (e) {}
+      applyDocFonts(box, fonts);
       box.dataset.key = doc.kind + ':' + (doc.code || doc.title);
     } catch (e) {
       console.error('render failed', e);
