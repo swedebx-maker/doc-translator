@@ -1083,6 +1083,9 @@ function fitPptxBodies(doc, cfg, bodies) {
       }
       continue;
     }
+    // Google Slides пише sz="5500" + normAutofit fontScale="25000": реальний розмір = sz × fontScale. Раніше це ігнорувалось → текст зменшувався двічі.
+    const nAuto = bodyPr && Array.from(bodyPr.childNodes).find(n => n.localName === 'normAutofit');
+    const fs = nAuto && nAuto.getAttribute('fontScale') ? (+nAuto.getAttribute('fontScale') / 100000 || 1) : 1;
     const ins = k => (bodyPr && bodyPr.hasAttribute(k) ? +bodyPr.getAttribute(k) : (k[0] === 'l' || k[0] === 'r' ? 91440 : 45720)) / EMU;
     const W = +ext.getAttribute('cx') / EMU - ins('lIns') - ins('rIns');
     const H = +ext.getAttribute('cy') / EMU - ins('tIns') - ins('bIns');
@@ -1092,7 +1095,7 @@ function fitPptxBodies(doc, cfg, bodies) {
       const text = runs.map(r => Array.from(r.getElementsByTagNameNS(A, 't')).map(t => t.textContent).join('')).join('');
       const sz = (runs.map(r => { const rp = Array.from(r.childNodes).find(n => n.localName === 'rPr'); return rp && +rp.getAttribute('sz'); }).find(Boolean)) || sizes[0];
       const bold = runs.some(r => { const rp = Array.from(r.childNodes).find(n => n.localName === 'rPr'); return rp && rp.getAttribute('b') === '1'; });
-      return { text, sz: sz / 100, bold };
+      return { text, sz: sz / 100 * fs, bold };
     });
     const need = f => {
       let h = 0, wordOk = true;
@@ -1111,13 +1114,16 @@ function fitPptxBodies(doc, cfg, bodies) {
     const allow = H * 1.02; // Жорсткий ліміт на висоту, щоб текст не вилазив за краї
     let f = 1;
     for (let k = 0; k < 40; k++) { const r = need(f); if (r.wordOk && r.h <= allow) break; f *= 0.95; if (f < 0.3) { f = 0.3; break; } }
-    if (f < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f / 50) * 50))); });
-    else continue;
+    const k = f * fs; // підсумковий множник відносно записаного sz
+    if (k > 0.995 && k < 1.005) continue;
+    rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * k / 50) * 50))); });
     Array.from(body.getElementsByTagNameNS(A, 'r')).forEach(r => {
       let rp = Array.from(r.childNodes).find(n => n.localName === 'rPr');
       if (!rp) { rp = doc.createElementNS(A, 'a:rPr'); r.insertBefore(rp, r.firstChild); }
-      if (!rp.getAttribute('sz')) rp.setAttribute('sz', String(Math.max(600, Math.round(sizes[0] * f / 50) * 50)));
+      if (!rp.getAttribute('sz')) rp.setAttribute('sz', String(Math.max(600, Math.round(sizes[0] * k / 50) * 50)));
     });
+    // розмір вже «запечений» у sz — старий fontScale/lnSpcReduction більше не потрібні (інакше шрифт зменшиться вдруге)
+    if (nAuto) { nAuto.removeAttribute('fontScale'); nAuto.removeAttribute('lnSpcReduction'); }
   }
 }
 
