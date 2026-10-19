@@ -269,6 +269,18 @@ async function ocrCanvas(canvas, psm, onProgress) {
 /* ---------- утилиты ---------- */
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function makeCanvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+// Швидка перевірка: фото/фон (багато кольорів, мало білого) не містить тексту для перекладу — OCR на них пропускаємо
+function imageStats(img) {
+  const c = makeCanvas(48, 48), x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(img, 0, 0, 48, 48);
+  const d = x.getImageData(0, 0, 48, 48).data; const bins = new Set(); let white = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i] > 235 && d[i + 1] > 235 && d[i + 2] > 235) white++;
+    bins.add((d[i] >> 4) << 8 | (d[i + 1] >> 4) << 4 | (d[i + 2] >> 4));
+  }
+  freeCanvas(c);
+  return { white: white / 2304, bins: bins.size };
+}
 function rotateCanvas(c, deg) {
   const out = makeCanvas(c.height, c.width), x = out.getContext('2d', { willReadFrequently: true });
   if (deg > 0) { x.translate(out.width, 0); x.rotate(Math.PI / 2); } else { x.translate(0, out.height); x.rotate(-Math.PI / 2); }
@@ -857,7 +869,7 @@ async function loadImage(blob) {
 async function processImageBlob(blob, ui, i, keepSize, context) {
   const img = await loadImage(blob);
   let w = img.naturalWidth, h = img.naturalHeight;
-  const k = keepSize ? clamp(1800 / Math.max(w, h), 1, 2.5) : Math.min(1, 2400 / Math.max(w, h));
+  const k = keepSize ? clamp(1500 / Math.max(w, h), 0.6, 2) : Math.min(1, 2400 / Math.max(w, h));
   const canvas = makeCanvas(w * k, h * k); const ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   if (ui) ui.stage(i, 'ocr');
@@ -869,7 +881,7 @@ async function processImageBlob(blob, ui, i, keepSize, context) {
   let res = await translatePageCanvas(canvas, blocks, { onStage: s => ui && ui.stage(i, s), context });
   if (orig) {
     // текст на схемах часто повернутий на 90° — пробуємо обидва напрямки, якщо горизонтального тексту майже нема
-    if (res.blocks.length < 2) {
+    if (res.blocks.length < 2 && imageStats(canvas).white > 0.3) {
       const score = bl => bl.reduce((a, b) => a + (b.text.match(/\p{L}/gu) || []).length, 0);
       let best = null;
       for (const deg of [90, -90]) {
@@ -1083,7 +1095,9 @@ async function processOffice(file, kind, ui) {
       const data = await zip.file(name).async('blob');
       const typed = new Blob([data], { type: /\.png$/i.test(name) ? 'image/png' : 'image/jpeg' });
       const probe = await loadImage(typed);
-      if (probe.naturalWidth >= 100 && probe.naturalHeight >= 60 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
+      const st = imageStats(probe);
+      const photo = st.white < 0.2 && st.bins > 200;
+      if (!photo && probe.naturalWidth >= 100 && probe.naturalHeight >= 60 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
         const { canvas, res } = await processImageBlob(typed, null, step, true, allText.slice(0, 2500));
         if (res.blocks.length) zip.file(name, await canvasToBlob(canvas, typed.type, 0.9));
         freeCanvas(canvas);
