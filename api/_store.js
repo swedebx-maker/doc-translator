@@ -17,4 +17,14 @@ async function putJSON(pathname, obj) {
     access: 'public', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 60
   });
 }
-module.exports = { enabled, url, getJSON, putJSON };
+async function list(prefix) {
+  const out = [];
+  let cursor;
+  do {
+    const r = await blob.list({ prefix, cursor, limit: 1000 });
+    out.push(...r.blobs);
+    cursor = r.cursor;
+  } while (cursor);
+  return out;
+}
+module.exports = { enabled, url, getJSON, putJSON, list };
