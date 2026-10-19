@@ -1,5 +1,6 @@
 // Коды переводов (как код комнаты в игре).
 // GET ?cfg=1           → { cloud: true/false }
+// GET ?list=1          → { items: [{code,title,kind,created,pages,file}] }  (все переводы, новые сверху)
 // GET ?code=AB12C      → meta
 // GET ?hash=sha256     → meta, если этот файл уже переводили
 // POST {action:'new'}  → { code }
@@ -9,24 +10,36 @@ const ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const BAD = /SEX|KUK|FUC|FUK|FCK|SHIT|CUNT|DICK|COCK|PISS|PORN|PORR|HORA|NAZI|RAPE|ANAL|TWAT|SLUT|KNUL|TITS|BAJS|FAN|ASS|GAY|KKK|HUJ|HUY|XUY|SUKA|BLYA|PIZD|ZHOP|KURW|CUM|DUM|JEB/;
 const okCode = c => /^[A-Z0-9]{5}$/.test(c || '');
 
-async function list(prefix) {
-  const out = [];
-  let cursor;
-  do {
-    const r = await blob.list({ prefix, cursor, limit: 1000 });
-    out.push(...r.blobs);
-    cursor = r.cursor;
-  } while (cursor);
-  return out;
-}
-module.exports = { enabled, url, getJSON, putJSON, list };
-
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
     if (req.method === 'GET') {
       if (req.query.cfg) return res.status(200).json({ cloud: store.enabled() });
       if (!store.enabled()) return res.status(503).json({ error: 'no_cloud' });
+
+      // --- СПИСОК УСІХ ПЕРЕКЛАДІВ (без пароля) ---
+      if (req.query.list) {
+        const blobs = await store.list('docs/');
+        const metas = blobs.filter(b => b.pathname.endsWith('/meta.json'));
+        const items = [];
+        for (const b of metas) {
+          try {
+            const m = await store.getJSON(b.pathname);
+            if (m && m.code) items.push({
+              code: m.code,
+              title: m.title || '',
+              kind: m.kind || 'pdf',
+              created: m.created || 0,
+              pages: (m.pages || []).length,
+              file: !!m.file
+            });
+          } catch (e) {}
+        }
+        items.sort((a, b) => (b.created || 0) - (a.created || 0));
+        return res.status(200).json({ items });
+      }
+      // -------------------------------------------
+
       if (req.query.code) {
         const code = String(req.query.code).toUpperCase().replace(/[^A-Z0-9]/g, '');
         if (!okCode(code)) return res.status(404).json({ error: 'not_found' });
