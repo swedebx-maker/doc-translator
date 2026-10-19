@@ -726,19 +726,31 @@ function drawBlock(ctx, b, text, W, H) {
   const origW = b.x1 - b.x0, origH = b.y1 - b.y0;
   const limitR = b.region ? b.region.x1 - 4 : W - Math.max(12, W * 0.03);
   const limitL = b.region ? b.region.x0 + 4 : Math.max(12, W * 0.03);
-  const limitB = b.region ? b.region.y1 - 4 : H - 4; // Сувора нижня межа
-
+  
+  // Аналізуємо фон. Якщо b.bgVar < 15 - це суцільний колір, якщо більше - це фото/деталі.
+  const isSolidBg = b.bgVar < 15;
+  const imageLimitB = b.region ? b.region.y1 - 4 : H - 4;
+  
   let maxW = origW;
   if (b.lines.length === 1) {
-    const grow = b.ocr ? 1.9 : 1.35;
+    // Якщо фон суцільний, дозволяємо розширюватися сильніше. Якщо деталі - жорстко обмежуємо.
+    const grow = b.ocr ? (isSolidBg ? 1.8 : 1.05) : 1.35;
     if (b.align === 'center') maxW = Math.min(origW * grow, 2 * Math.min((b.x0 + b.x1) / 2 - limitL, limitR - (b.x0 + b.x1) / 2));
     else maxW = Math.min(origW * grow, limitR - b.x0);
     maxW = Math.max(maxW, origW);
   }
   
-  let size = b.size * 0.9, lines;
+  let allowB = imageLimitB;
+  if (b.ocr) {
+    // Якщо фото/деталі - суворо обмежуємо висоту (оригінальна + зовсім трохи).
+    // Якщо суцільний фон - дозволяємо розширюватися вниз значно більше.
+    const allowedExtraY = isSolidBg ? Math.max(origH * 1.5, 40) : Math.max(origH * 0.1, 4);
+    allowB = Math.min(imageLimitB, b.y1 + allowedExtraY);
+  }
+  
+  let size = b.size * (b.ocr && !isSolidBg ? 0.85 : 0.95), lines;
   let pitchK = clamp(b.pitch / b.size, 1.05, 1.6);
-  const minSize = 4; // Мінімальний можливий розмір
+  const minSize = 4;
   let firstBase = 0;
 
   for (let i = 0; i < 60; i++) {
@@ -748,20 +760,25 @@ function drawBlock(ctx, b, text, W, H) {
     firstBase = b.lines[0].base;
     let bottom = firstBase + (lines.length - 1) * size * pitchK + size * 0.25;
     
-    // Якщо текст вилазить вниз — пробуємо посунути його вгору
-    if (bottom > limitB) {
-      const shift = bottom - limitB;
+    // Зсув вгору, якщо вилазить за дозволені межі
+    if (bottom > allowB) {
+      const shift = bottom - allowB;
       const limitT = b.region ? b.region.y0 + 4 : 4;
-      const top = firstBase - size;
-      if (top - shift >= limitT) {
-        firstBase -= shift;
-        bottom -= shift;
+      let top = firstBase - size;
+      
+      // Для тексту на фото зсув вгору теж обмежуємо, щоб не вилізти за межі "стертого" фону
+      const maxShift = isSolidBg ? 9999 : (origH * 0.15 + 4);
+      const actualShift = Math.min(shift, maxShift);
+
+      if (top - actualShift >= limitT) {
+        firstBase -= actualShift;
+        bottom -= actualShift;
       }
     }
     
-    // Якщо вліз або шрифт вже крихітний — зупиняємось
-    if (bottom <= limitB || size <= minSize) break;
-    size *= 0.95; 
+    // Якщо помістився або шрифт вже крихітний - зупиняємось
+    if (bottom <= allowB || size <= minSize) break;
+    size *= 0.92; // Зменшуємо шрифт (швидше ніж раніше)
   }
 
   ctx.fillStyle = rgb(b.fg); ctx.textBaseline = 'alphabetic';
@@ -773,7 +790,7 @@ function drawBlock(ctx, b, text, W, H) {
   const bx0 = b.align === 'center' ? x - maxLineW / 2 : b.align === 'right' ? x - maxLineW : x;
   return { x0: Math.min(b.x0, bx0), y0: b.y0, x1: Math.max(b.x1, bx0 + maxLineW), y1: Math.max(b.y1, firstBase + (lines.length - 1) * size * pitchK + size * 0.25) };
 }
-
+  
 async function translatePageCanvas(src, blocks, opts) {
   const W = src.width, H = src.height;
   const ctx = src.getContext('2d', { willReadFrequently: true });
@@ -1091,6 +1108,7 @@ function fitPptxBodies(doc, cfg, bodies) {
     });
   }
 }
+
 async function processOffice(file, kind, ui) {
   await loadScript(CDN.jszip);
   const cfg = OFFICE[kind];
@@ -1134,6 +1152,21 @@ async function processOffice(file, kind, ui) {
         if (body) bodies.add(body);
       });
       fitPptxBodies(doc, cfg, bodies);
+      
+      // --- ФІКС: ВИНЕСЕННЯ ТЕКСТУ НА ПЕРЕДНІЙ ПЛАН (ЩОБ НЕ ХОВАВСЯ ЗА КАРТИНКАМИ) ---
+      if (kind === 'pptx' && /slide\d+\.xml/.test(name)) {
+        const shapesToFront = new Set();
+        pars.forEach(par => {
+          let n = par.p;
+          // Шукаємо батьківський елемент "sp" (фігуру), у якому лежить текст
+          while (n && n.localName !== 'sp') n = n.parentNode;
+          if (n && n.parentNode) shapesToFront.add(n);
+        });
+        // Переміщуємо фігуру в кінець списку вузлів, що означає "на передній план"
+        shapesToFront.forEach(sp => sp.parentNode.appendChild(sp));
+      }
+      // -------------------------------------------------------------------------------
+
       zip.file(name, new XMLSerializer().serializeToString(doc));
     }
     ui.done(step);
