@@ -1315,23 +1315,50 @@ function openViewer(doc) {
   $('#v-mode').classList.toggle('hidden', office);
   ['#v-prev', '#v-next', '#v-count'].forEach(s => $(s).classList.toggle('hidden', office));
   $('#v-office').classList.add('hidden'); $('#v-office-msg').classList.add('hidden');
+  { const r = $('#v-render'); if (r) { r.classList.add('hidden'); r.dataset.key = ''; r.innerHTML = ''; } }
   if (office) showOffice(doc);
   else buildPages(doc);
   updateShareBtn();
 }
 function showOffice(doc) {
   const frame = $('#v-office'), msg = $('#v-office-msg');
-  if (doc.fileUrl) {
-    // Office Online не принимает Chrome/Firefox/Edge на iOS (там отдаётся «Unsupported Browser») — для них Google viewer
-    const iosAlt = /CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
-    frame.src = iosAlt
-      ? 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(doc.fileUrl)
-      : 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(doc.fileUrl);
-    frame.classList.remove('hidden'); msg.classList.add('hidden');
-  } else {
-    frame.classList.add('hidden'); msg.classList.remove('hidden');
+  let box = $('#v-render');
+  if (!box) { box = document.createElement('div'); box.id = 'v-render'; box.style.cssText = 'flex:1;width:100%;overflow:auto;background:#555;-webkit-overflow-scrolling:touch;'; frame.parentNode.insertBefore(box, frame); }
+  const src = doc.fileBlob || doc.fileUrl;
+  if (!src) {
+    box.classList.add('hidden'); frame.classList.add('hidden'); msg.classList.remove('hidden');
     msg.innerHTML = `<div>${esc(doc.saving ? t('savingShort') : t('officeNoCloud'))}</div>`;
+    return;
   }
+  if (box.dataset.key === doc.kind + ':' + (doc.code || doc.title)) { box.classList.remove('hidden'); return; }
+  msg.classList.add('hidden'); frame.classList.add('hidden'); box.classList.remove('hidden');
+  box.innerHTML = '<div style="color:#fff;padding:30px;text-align:center;font-size:13px">…</div>';
+  (async () => {
+    try {
+      const blob = doc.fileBlob || await (await fetch(doc.fileUrl)).blob();
+      const buf = await blob.arrayBuffer();
+      box.innerHTML = '';
+      if (doc.kind === 'pptx') {
+        if (!window.pptxPreview) await Engine.loadScript('https://cdn.jsdelivr.net/npm/pptx-preview@1.0.5/dist/pptx-preview.umd.js');
+        const w = Math.min(box.clientWidth - 20, 1100) || 900;
+        const pv = window.pptxPreview.init(box, { width: w, height: Math.round(w * 9 / 16) });
+        await pv.preview(buf);
+        box.querySelectorAll('canvas,div').forEach(() => {});
+      } else {
+        if (!window.JSZip) await Engine.loadScript(Engine.CDN.jszip);
+        if (!window.docx) await Engine.loadScript('https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js');
+        await window.docx.renderAsync(buf, box, null, { inWrapper: true, ignoreWidth: false });
+      }
+      box.dataset.key = doc.kind + ':' + (doc.code || doc.title);
+    } catch (e) {
+      console.error('render failed', e);
+      box.classList.add('hidden');
+      if (doc.fileUrl) {
+        frame.src = 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(doc.fileUrl);
+        frame.classList.remove('hidden');
+      } else { msg.classList.remove('hidden'); msg.innerHTML = '<div>Не вдалося показати. Натисни PDF/завантажити.</div>'; }
+    }
+  })();
 }
 function buildPages(doc) {
   const wrap = $('#v-pages');
