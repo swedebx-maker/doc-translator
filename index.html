@@ -56,7 +56,7 @@ button{cursor:pointer;border:none;background:none;}
 
 /* ---------- екрани ---------- */
 .screen{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px 18vh;}
-#home{justify-content:flex-start;padding-top:18vh;}
+
 
 #lang{position:fixed;top:16px;right:16px;z-index:5;display:flex;gap:0;}
 #lang button{padding:6px 10px;font-size:10px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);}
@@ -141,6 +141,14 @@ button{cursor:pointer;border:none;background:none;}
   .vbot .count{min-width:70px;}
 }
 @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+/* головна сторінка: вертикальний скрол на мобільних/iPad */
+#home{
+  justify-content:flex-start;
+  padding-top:12vh;
+  padding-bottom:40vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
 </style>
 </head>
 <body>
