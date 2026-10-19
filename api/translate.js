@@ -18,11 +18,10 @@ module.exports = async (req, res) => {
     const context = body.context ? String(body.context).slice(0, 4000) : undefined;
 
     const out = [];
-    for (let i = 0; i < texts.length; i += 50) {
-      const chunk = texts.slice(i, i + 50);
+    const call = async (chunk, useTags) => {
       const payload = { text: chunk, target_lang: target, preserve_formatting: true };
       if (context) payload.context = context;
-      if (body.tags) payload.tag_handling = 'xml';
+      if (useTags) payload.tag_handling = 'xml';
       let r, tries = 0;
       while (true) {
         r = await fetch(BASE + '/v2/translate', {
@@ -30,11 +29,28 @@ module.exports = async (req, res) => {
           headers: { 'Authorization': 'DeepL-Auth-Key ' + KEY, 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        if ((r.status === 429 || r.status >= 500) && tries < 3) { tries++; await new Promise(s => setTimeout(s, 700 * tries)); continue; }
+        if ((r.status === 429 || r.status >= 500) && tries < 5) { tries++; await new Promise(s => setTimeout(s, 1000 * tries)); continue; }
         break;
       }
+      return r;
+    };
+    for (let i = 0; i < texts.length; i += 50) {
+      const chunk = texts.slice(i, i + 50);
+      let r = await call(chunk, !!body.tags);
       if (r.status === 456) return res.status(456).json({ error: 'quota' });
-      if (!r.ok) return res.status(502).json({ error: 'deepl', status: r.status, detail: (await r.text()).slice(0, 200) });
+      if (r.status === 400) {
+        // один «плохой» текст не должен ронять весь файл: переводим по одному, без тегов; что не вышло — оставляем как есть
+        console.error('deepl 400', (await r.text()).slice(0, 300));
+        for (const t of chunk) {
+          let rr = await call([t], !!body.tags);
+          if (rr.status === 400 && body.tags) rr = await call([t], false);
+          if (rr.status === 456) return res.status(456).json({ error: 'quota' });
+          if (rr.ok) out.push((await rr.json()).translations[0].text);
+          else { console.error('deepl skip', rr.status, (await rr.text()).slice(0, 200)); out.push(t); }
+        }
+        continue;
+      }
+      if (!r.ok) { const d = (await r.text()).slice(0, 300); console.error('deepl', r.status, d); return res.status(502).json({ error: 'deepl', status: r.status, detail: d }); }
       const j = await r.json();
       j.translations.forEach(t => out.push(t.text));
     }
