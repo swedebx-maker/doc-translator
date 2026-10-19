@@ -866,6 +866,45 @@ async function loadImage(blob) {
     const img = new Image(); img.decoding = 'async'; img.src = url; await img.decode(); return img;
   } finally { setTimeout(() => URL.revokeObjectURL(url), 2000); }
 }
+let CLOUD_OFF = false;
+async function cloudLines(canvas) {
+  if (CLOUD_OFF) return null;
+  try {
+    let s = 1, blob = null;
+    for (let t = 0; t < 4; t++) {
+      const c = makeCanvas(canvas.width * s, canvas.height * s), x = c.getContext('2d');
+      x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(canvas, 0, 0, c.width, c.height);
+      blob = await canvasToBlob(c, 'image/jpeg', t ? 0.7 : 0.85); freeCanvas(c);
+      if (blob.size < 900e3) break; s *= 0.75;
+    }
+    if (!blob || blob.size > 3.2e6) return null;
+    const b64 = await new Promise(ok => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.readAsDataURL(blob); });
+    const r = await fetch('/api/ocr', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: b64 }) });
+    if (r.status === 404 || r.status === 405 || r.status === 503) { if (r.status !== 503 || (await r.json().catch(() => ({}))).error === 'no_ocr') CLOUD_OFF = true; return null; }
+    if (!r.ok) return null;
+    const j = await r.json();
+    return (j.lines || []).map(l => ({ ...l, x0: l.x0 / s, x1: l.x1 / s, y0: l.y0 / s, y1: l.y1 / s }));
+  } catch (e) { console.warn('cloud ocr', e); return null; }
+}
+// deg: 0 — обычный текст; 90/-90 — строки, которые станут обычными после поворота холста на deg
+function cloudToBlocks(cl, W, H, deg) {
+  const want = deg === 0 ? 0 : -deg;
+  const region = deg === 0 ? { x0: 0, y0: 0, x1: W, y1: H } : { x0: 0, y0: 0, x1: H, y1: W };
+  const lines = [];
+  for (const l of cl) {
+    if ((l.angle || 0) !== want) continue;
+    const text = String(l.text || '').replace(/\s+/g, ' ').trim();
+    if (!text || (text.match(/\p{L}/gu) || []).length < 2) continue;
+    let x0 = l.x0, x1 = l.x1, y0 = l.y0, y1 = l.y1;
+    if (deg === 90) { x0 = H - l.y1; x1 = H - l.y0; y0 = l.x0; y1 = l.x1; }
+    else if (deg === -90) { x0 = l.y0; x1 = l.y1; y0 = W - l.x1; y1 = W - l.x0; }
+    const hh = y1 - y0; if (hh < 7) continue;
+    lines.push({ x0, x1, top: y0, bot: y1, base: y1 - hh * 0.2, h: hh * 0.92, text, ocr: true, region, conf: l.conf == null ? 90 : l.conf });
+  }
+  const blocks = linesToBlocks(lines, { gap: 0.7, align: 0.9 });
+  blocks.forEach(b => { b.ocr = true; b.region = b.lines[0].region; b.bold = undefined; b.mode = undefined; });
+  return blocks;
+}
 async function processImageBlob(blob, ui, i, keepSize, context) {
   const img = await loadImage(blob);
   let w = img.naturalWidth, h = img.naturalHeight;
@@ -873,6 +912,24 @@ async function processImageBlob(blob, ui, i, keepSize, context) {
   const canvas = makeCanvas(w * k, h * k); const ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   if (ui) ui.stage(i, 'ocr');
+  const cl = await cloudLines(canvas);
+  if (cl) {
+    const svBlob0 = keepSize ? null : await canvasToBlob(canvas, 'image/jpeg', 0.8);
+    const W = canvas.width, H = canvas.height, opts = { onStage: s => ui && ui.stage(i, s), context };
+    let res0 = await translatePageCanvas(canvas, cloudToBlocks(cl, W, H, 0), opts);
+    if (keepSize) for (const deg of [90, -90]) {
+      const bl = cloudToBlocks(cl, W, H, deg); if (!bl.length) continue;
+      const r = rotateCanvas(canvas, deg);
+      const r2 = await translatePageCanvas(r, bl, opts);
+      if (r2.blocks.length) {
+        const back = rotateCanvas(r, -deg), cx = canvas.getContext('2d');
+        cx.clearRect(0, 0, W, H); cx.drawImage(back, 0, 0, W, H); freeCanvas(back);
+        res0 = { blocks: res0.blocks.concat(r2.blocks) };
+      }
+      freeCanvas(r);
+    }
+    return { canvas, svBlob: svBlob0, res: res0 };
+  }
   const full = c => [{ x0: 0, y0: 0, x1: c.width, y1: c.height }];
   const orig = keepSize ? makeCanvas(canvas.width, canvas.height) : null;
   if (orig) orig.getContext('2d').drawImage(canvas, 0, 0);
@@ -1088,23 +1145,28 @@ async function processOffice(file, kind, ui) {
     }
     ui.done(step);
   }
-  for (const name of media) {
-    if (ui.cancelled()) throw new Error('cancelled');
-    step++; ui.stage(step, 'ocr');
-    try {
-      const data = await zip.file(name).async('blob');
-      const typed = new Blob([data], { type: /\.png$/i.test(name) ? 'image/png' : 'image/jpeg' });
-      const probe = await loadImage(typed);
-      const st = imageStats(probe);
-      const photo = st.white < 0.2 && st.bins > 200;
-      if (!photo && probe.naturalWidth >= 100 && probe.naturalHeight >= 60 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
-        const { canvas, res } = await processImageBlob(typed, null, step, true, allText.slice(0, 2500));
-        if (res.blocks.length) zip.file(name, await canvasToBlob(canvas, typed.type, 0.9));
-        freeCanvas(canvas);
-      }
-    } catch (e) { console.warn('image', name, e); }
-    ui.done(step);
-  }
+  let mi = 0;
+  const imgWorker = async () => {
+    while (mi < media.length) {
+      const name = media[mi++];
+      if (ui.cancelled()) throw new Error('cancelled');
+      const my = ++step; ui.stage(my, 'ocr');
+      try {
+        const data = await zip.file(name).async('blob');
+        const typed = new Blob([data], { type: /\.png$/i.test(name) ? 'image/png' : 'image/jpeg' });
+        const probe = await loadImage(typed);
+        const st = imageStats(probe);
+        const photo = st.white < 0.2 && st.bins > 200;
+        if (!photo && probe.naturalWidth >= 100 && probe.naturalHeight >= 60 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
+          const { canvas, res } = await processImageBlob(typed, null, my, true, allText.slice(0, 2500));
+          if (res.blocks.length) zip.file(name, await canvasToBlob(canvas, typed.type, 0.9));
+          freeCanvas(canvas);
+        }
+      } catch (e) { console.warn('image', name, e); }
+      ui.done(my);
+    }
+  };
+  await Promise.all([imgWorker(), imgWorker(), imgWorker()]);
   const mime = kind === 'pptx' ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   return await zip.generateAsync({ type: 'blob', mimeType: mime, compression: 'DEFLATE' });
 }
