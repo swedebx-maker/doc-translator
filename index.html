@@ -1322,7 +1322,11 @@ function openViewer(doc) {
 function showOffice(doc) {
   const frame = $('#v-office'), msg = $('#v-office-msg');
   if (doc.fileUrl) {
-    frame.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(doc.fileUrl);
+    // Office Online не принимает Chrome/Firefox/Edge на iOS (там отдаётся «Unsupported Browser») — для них Google viewer
+    const iosAlt = /CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
+    frame.src = iosAlt
+      ? 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(doc.fileUrl)
+      : 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(doc.fileUrl);
     frame.classList.remove('hidden'); msg.classList.add('hidden');
   } else {
     frame.classList.add('hidden'); msg.classList.remove('hidden');
