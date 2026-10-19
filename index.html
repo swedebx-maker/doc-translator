@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="uk" translate="no" class="notranslate">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060606">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>ПЕРЕКЛАД · svenska → українська</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%23060606'/%3E%3Cpath fill='%23c3252c' d='M1 1h6v1H1zM1 2h1v5H1zM6 2h1v5H6z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiny5&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060606; --panel:#0e0e0e; --panel-2:#151515; --line:#232323; --line-2:#2e2e2e;
+  --text:#d8d2d2; --dim:#6f6868; --dim-2:#4a4545;
+  --red:#c3252c; --red-d:#7a1418; --red-dd:#3a0a0c; --red-l:#ff5a5f;
+  --px:'Tiny5', 'Press Start 2P', monospace;
+  --logo:'Press Start 2P', 'Tiny5', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--px);overflow:hidden;}
+body{-webkit-font-smoothing:none;font-smooth:never;}
+button,input{font:inherit;color:inherit;}
+button{cursor:pointer;border:none;background:none;}
+.hidden{display:none !important;}
+::selection{background:var(--red-d);color:#fff;}
+
+/* ---------- сцена: звёзды и пиксельный горизонт ---------- */
+#scene{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#scene svg{position:absolute;left:0;bottom:0;width:100%;height:46vh;}
+#stars{position:absolute;inset:0;}
+#stars i{position:absolute;width:3px;height:3px;background:#3a3434;}
+#stars i.r{background:var(--red-d);}
+#stars i.b{width:4px;height:4px;background:#5a5252;}
+@keyframes tw{50%{opacity:.25;}}
+#stars i.t{animation:tw 3.5s steps(2) infinite;}
+
+/* ---------- пиксельные рамки (ступенчатые углы, как в Майнкрафте) ---------- */
+.px{clip-path:polygon(0 6px,3px 6px,3px 3px,6px 3px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 3px) calc(100% - 6px),calc(100% - 3px) calc(100% - 3px),calc(100% - 6px) calc(100% - 3px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 6px),0 calc(100% - 6px));}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 26px;background:var(--panel-2);color:var(--text);
+  box-shadow:inset 0 0 0 3px var(--line-2), inset -3px -6px 0 3px #090909, inset 3px 3px 0 3px #222;
+  font-size:20px;letter-spacing:.06em;text-transform:uppercase;transition:transform .06s;}
+.btn:hover{background:#1b1b1b;}
+.btn:active{transform:translateY(3px);}
+.btn.red{background:var(--red-d);color:#ffe9e9;box-shadow:inset 0 0 0 3px #a01c22, inset -3px -6px 0 3px #4d0c0f, inset 3px 3px 0 3px #b8333a;}
+.btn.red:hover{background:#8c181d;}
+.btn.small{padding:10px 16px;font-size:15px;gap:8px;}
+.btn:disabled{opacity:.4;pointer-events:none;}
+.ico{width:1.1em;height:1.1em;display:inline-block;image-rendering:pixelated;}
+
+/* ---------- экраны ---------- */
+.screen{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px 18vh;}
+#lang{position:fixed;top:16px;right:16px;z-index:5;display:flex;gap:0;}
+#lang button{padding:8px 12px;font-size:15px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);}
+#lang button.on{color:#fff;background:var(--red-dd);box-shadow:inset 0 0 0 2px var(--red-d);}
+
+.logo{font-family:var(--logo);font-size:clamp(34px,6.4vw,72px);font-weight:400;letter-spacing:.04em;color:#efe9e9;line-height:1;
+  text-shadow:4px 4px 0 var(--red-dd), 8px 8px 0 #160304;}
+.logo b{color:var(--red);font-weight:400;}
+.tag{margin-top:22px;font-size:clamp(14px,2vw,18px);color:var(--dim);letter-spacing:.2em;text-transform:uppercase;}
+.tag .arr{color:var(--red);}
+
+.drop{margin-top:44px;width:min(560px,92vw);padding:30px 24px 26px;background:var(--panel);text-align:center;position:relative;
+  box-shadow:inset 0 0 0 3px var(--line-2), inset 0 -6px 0 3px #0a0a0a;}
+.drop.over{background:#1a0a0b;box-shadow:inset 0 0 0 3px var(--red);}
+.drop .btn{width:100%;font-size:22px;padding:20px;}
+.drop .fmt{margin-top:14px;font-size:13px;color:var(--dim);letter-spacing:.18em;}
+.drop .hint{margin-top:6px;font-size:15px;color:var(--dim-2);}
+#file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+
+.codebox{margin-top:22px;width:min(560px,92vw);display:flex;flex-direction:column;align-items:center;gap:10px;}
+.codebox .lbl{font-size:17px;color:var(--dim);letter-spacing:.06em;}
+.coderow{display:flex;gap:10px;width:100%;}
+#code{flex:1;min-width:0;padding:14px 16px;font-size:26px;letter-spacing:.4em;text-transform:uppercase;text-align:center;
+  background:#0b0b0b;border:none;outline:none;color:#fff;box-shadow:inset 0 0 0 3px var(--line-2);}
+#code:focus{box-shadow:inset 0 0 0 3px var(--red);}
+#code::placeholder{color:#2e2a2a;letter-spacing:.4em;}
+.err{min-height:20px;font-size:14px;color:var(--red-l);text-align:center;margin-top:8px;}
+
+.recent{margin-top:22px;width:min(560px,92vw);}
+.recent .lbl{font-size:13px;color:var(--dim-2);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+.recent a{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;margin-bottom:6px;background:var(--panel);color:var(--text);text-decoration:none;font-size:15px;box-shadow:inset 0 0 0 2px var(--line);}
+.recent a:hover{box-shadow:inset 0 0 0 2px var(--red-d);}
+.recent a span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.recent a span:last-child{color:var(--red);letter-spacing:.2em;flex:0 0 auto;}
+
+/* ---------- работа ---------- */
+#work .title{font-size:clamp(22px,3.4vw,34px);letter-spacing:.06em;max-width:90vw;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.bar{margin-top:34px;width:min(620px,90vw);height:34px;padding:5px;background:#0b0b0b;box-shadow:inset 0 0 0 3px var(--line-2);display:flex;gap:4px;}
+.bar i{flex:1;background:#141414;}
+.bar i.on{background:var(--red);box-shadow:inset 0 -4px 0 var(--red-d);}
+.stage{margin-top:22px;font-size:18px;color:var(--text);letter-spacing:.05em;min-height:24px;text-align:center;}
+.substage{margin-top:8px;font-size:16px;color:var(--dim);min-height:18px;text-align:center;}
+.blink{animation:tw 1s steps(2) infinite;}
+#work .btn{margin-top:36px;}
+
+/* ---------- просмотр ---------- */
+#view{padding:0;justify-content:flex-start;background:#000;}
+.vtop{flex:0 0 auto;width:100%;display:flex;align-items:center;gap:12px;padding:10px 12px;background:#080808;box-shadow:0 3px 0 #111;z-index:3;}
+.vtop .vtitle{flex:1;min-width:0;font-size:17px;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:.04em;}
+.seg{display:flex;}
+.seg button{padding:10px 14px;font-size:15px;color:var(--dim);background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);letter-spacing:.06em;}
+.seg button.on{color:#fff;background:var(--red-d);box-shadow:inset 0 0 0 2px #a01c22;}
+.stage-wrap{flex:1 1 auto;width:100%;min-height:0;position:relative;overflow:hidden;touch-action:pan-y pinch-zoom;}
+.pages{position:absolute;inset:0;display:flex;transition:transform .28s steps(8);}
+.pg{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;padding:14px;position:relative;}
+.pg .holder{position:relative;max-width:100%;max-height:100%;}
+.pg img{display:block;max-width:100%;max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);width:auto;height:auto;image-rendering:auto;box-shadow:0 0 0 2px #1a1a1a;background:#fff;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+.pg .hot{position:absolute;inset:0;}
+.pg .hot i{position:absolute;cursor:pointer;}
+.pg .hot i:hover{outline:2px dashed rgba(195,37,44,.55);}
+.pg .loading{position:absolute;color:var(--dim);font-size:15px;}
+.vbot{flex:0 0 auto;width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#080808;box-shadow:0 -3px 0 #111;z-index:3;}
+.vbot .count{min-width:110px;text-align:center;font-size:18px;letter-spacing:.1em;}
+.vbot .sp{flex:1;}
+.tip{position:fixed;z-index:20;max-width:min(520px,92vw);background:#0d0d0d;color:var(--text);padding:16px 18px;font-size:16px;line-height:1.45;
+  box-shadow:inset 0 0 0 3px var(--red-d);}
+.tip .k{font-size:12px;color:var(--red);letter-spacing:.18em;margin-bottom:4px;}
+.tip .sv{font-family:Helvetica,Arial,sans-serif;font-size:17px;color:#fff;-webkit-font-smoothing:antialiased;}
+.tip .uk{font-family:Helvetica,Arial,sans-serif;font-size:15px;color:var(--dim);margin-top:10px;-webkit-font-smoothing:antialiased;}
+.office{flex:1;width:100%;border:none;background:#fff;}
+.office-msg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;text-align:center;color:var(--dim);font-size:16px;}
+
+/* ---------- окно «поделиться» ---------- */
+.modal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:18px;}
+.modal .box{width:min(520px,94vw);background:var(--panel);padding:28px 24px;text-align:center;box-shadow:inset 0 0 0 3px var(--line-2);}
+.modal .k{font-size:14px;color:var(--dim);letter-spacing:.2em;}
+.modal .bigcode{font-size:clamp(56px,12vw,88px);letter-spacing:.18em;color:#fff;margin:6px 0 2px;text-shadow:4px 4px 0 var(--red-dd);padding-left:.18em;}
+.modal .link{font-size:15px;color:var(--red-l);word-break:break-all;margin-top:6px;}
+.modal img{width:170px;height:170px;margin:18px auto 6px;display:block;image-rendering:pixelated;background:#fff;padding:8px;}
+.modal .row{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+.modal .note{font-size:13px;color:var(--dim);margin-top:12px;line-height:1.5;}
+
+@media (max-width:640px){
+  .btn{font-size:17px;padding:14px 18px;}
+  .vtop .vtitle{display:none;}
+  .vbot .count{min-width:70px;font-size:16px;}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+</style>
+</head>
+<body>
+<div id="scene" aria-hidden="true">
+  <div id="stars"></div>
+  <svg viewBox="0 0 320 120" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">
+    <g fill="#1d0608">
+      <rect x="58" y="44" width="24" height="4"/><rect x="52" y="48" width="36" height="4"/><rect x="48" y="52" width="44" height="4"/>
+      <rect x="46" y="56" width="48" height="8"/><rect x="44" y="64" width="52" height="12"/>
+    </g>
+    <g fill="#2a0a0c"><rect x="60" y="48" width="8" height="4"/><rect x="54" y="52" width="8" height="4"/></g>
+    <path fill="#0d0d0d" d="M0 78h12v-4h8v-6h8v-4h6v4h8v6h10v-8h8v-6h8v4h8v6h6v-4h10v-6h8v4h6v8h10v-4h8v-8h8v-4h6v4h8v6h8v6h10v-6h8v-4h8v4h6v6h8v-4h10v-6h8v4h6v8h8v-4h10v-6h6v4h8v8h10v-4h8v-4h8v6h8v44H0z"/>
+    <path fill="#090909" d="M0 92h10v-4h10v-4h12v4h8v-6h10v4h12v6h10v-4h8v-6h10v6h12v4h8v-4h10v-4h12v4h8v6h10v-6h12v-4h8v4h10v6h12v-4h8v-4h10v4h12v6h8v-4h10v-6h12v4h8v4h10v-4h12v6h6v32H0z"/>
+    <rect x="0" y="104" width="320" height="16" fill="#120405"/>
+    <rect x="0" y="104" width="320" height="2" fill="#2a090b"/>
+  </svg>
+</div>
+<div id="lang"><button data-l="uk">UA</button><button data-l="sv">SV</button></div>
+
+<section id="home" class="screen">
+  <div class="logo">ПЕРЕ<b>КЛАД</b></div>
+  <div class="tag">svenska <span class="arr">→</span> українська</div>
+  <div class="drop px" id="drop">
+    <button class="btn red px" id="pick"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges"><path fill="currentColor" d="M3 0h2v4h2v1H6v1H5v1H3V6H2V5H1V4h2zM0 7h8v1H0z"/></svg><span data-t="upload"></span></button>
+    <div class="fmt">PDF · PPTX · DOCX · JPG · PNG</div>
+    <div class="hint" data-t="drop"></div>
+    <input type="file" id="file" accept=".pdf,.pptx,.docx,.jpg,.jpeg,.png,.webp,application/pdf,image/*">
+  </div>
+  <div class="codebox">
+    <div class="lbl" data-t="orCode"></div>
+    <div class="coderow">
+      <input id="code" maxlength="5" placeholder="•••••" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button class="btn px" id="open" data-t="open"></button>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+  <div class="recent hidden" id="recent"></div>
+</section>
+
+<section id="work" class="screen hidden">
+  <div class="title" id="w-title"></div>
+  <div class="bar" id="w-bar"></div>
+  <div class="stage" id="w-stage"></div>
+  <div class="substage" id="w-sub"></div>
+  <button class="btn small px" id="w-cancel" data-t="cancel"></button>
+</section>
+
+<section id="view" class="screen hidden">
+  <div class="vtop">
+    <button class="btn small px" id="v-back" aria-label="Назад"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges"><path fill="currentColor" d="M3 1h1v1h1v1h3v2H5v1H4v1H3V6H2V5H1V3h1V2h1z"/></svg></button>
+    <div class="vtitle" id="v-title"></div>
+    <div class="seg" id="v-mode"><button data-m="uk" class="on">UA</button><button data-m="sv">SV</button></div>
+    <button class="btn small px" id="v-share"><span data-t="share"></span></button>
+  </div>
+  <div class="stage-wrap" id="v-stage"><div class="pages" id="v-pages"></div></div>
+  <iframe class="office hidden" id="v-office" title="document"></iframe>
+  <div class="office-msg hidden" id="v-office-msg"></div>
+  <div class="vbot" id="v-bot">
+    <button class="btn small px" id="v-prev" aria-label="prev"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges"><path fill="currentColor" d="M5 0h1v8H5V7H4V6H3V5H2V3h1V2h1V1h1z"/></svg></button>
+    <div class="count" id="v-count"></div>
+    <button class="btn small px" id="v-next" aria-label="next"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges"><path fill="currentColor" d="M2 0h1v1h1v1h1v1h1v2H5v1H4v1H3v1H2z"/></svg></button>
+    <div class="sp"></div>
+    <button class="btn small px" id="v-dl"><svg class="ico" viewBox="0 0 8 8" shape-rendering="crispEdges"><path fill="currentColor" d="M3 0h2v4h2v1H6v1H5v1H3V6H2V5H1V4h2zM0 7h8v1H0z"/></svg><span data-t="download"></span></button>
+  </div>
+</section>
+
+<div class="modal hidden" id="share">
+  <div class="box px">
+    <div class="k" data-t="codeLabel"></div>
+    <div class="bigcode" id="s-code"></div>
+    <div class="link" id="s-link"></div>
+    <img id="s-qr" alt="QR">
+    <div class="note" data-t="shareNote"></div>
+    <div class="row"><button class="btn small px" id="s-copy" data-t="copy"></button><button class="btn small red px" id="s-close">OK</button></div>
+  </div>
+</div>
+<div class="tip hidden" id="tip"></div>
+
+<script>
+/* =====================================================================
+   ДВИЖОК ПЕРЕВОДА (работает в браузере)
+   PDF:   pdf.js рисует страницу → находим текстовые блоки (векторный текст)
+          + текст на картинках (Tesseract OCR) → DeepL переводит блоки страницы
+          с контекстом всей страницы → стираем шведский, сохраняя фон → пишем украинский.
+   Картинки (jpg/png): то же самое, только OCR.
+   PPTX/DOCX: переводим текст внутри XML (форматирование внутри предложения
+          сохраняется тегами DeepL) + картинки внутри файла через OCR.
+   ===================================================================== */
+const CDN = {
+  pdfjs: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.min.mjs',
+  pdfWorker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.worker.min.mjs',
+  tesseract: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
+  jszip: 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js',
+  jspdf: 'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js',
+  blob: 'https://esm.sh/@vercel/blob@2.8.2/client'
+};
+const FONT = 'Helvetica, Arial, "Segoe UI", Roboto, sans-serif';
+const TARGET_LONG = 1800;          // длинная сторона страницы в пикселях
+const LETTER = /\p{L}/u;
+
+const _loaded = {};
+function loadScript(src) {
+  if (_loaded[src]) return _loaded[src];
+  return _loaded[src] = new Promise((ok, bad) => {
+    const s = document.createElement('script'); s.src = src; s.async = true;
+    s.onload = () => ok(); s.onerror = () => { delete _loaded[src]; bad(new Error('load ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+let _pdfjs = null;
+async function getPdfjs() {
+  if (_pdfjs) return _pdfjs;
+  _pdfjs = await import(CDN.pdfjs);
+  _pdfjs.GlobalWorkerOptions.workerSrc = CDN.pdfWorker;
+  return _pdfjs;
+}
+
+/* ---------- OCR (один воркер на всё время, язык шведский) ---------- */
+let _ocr = null, _ocrPsm = null;
+async function getOcr(onProgress) {
+  if (!_ocr) {
+    await loadScript(CDN.tesseract);
+    _ocr = Tesseract.createWorker('swe', 1, {
+      logger: m => { if (onProgress && m.status && /loading|initializ/.test(m.status)) onProgress(m.progress || 0); }
+    });
+  }
+  return _ocr;
+}
+async function ocrCanvas(canvas, psm, onProgress) {
+  const w = await getOcr(onProgress);
+  if (_ocrPsm !== psm) { await w.setParameters({ tessedit_pageseg_mode: String(psm), preserve_interword_spaces: '1' }); _ocrPsm = psm; }
+  const { data } = await w.recognize(canvas, {}, { blocks: true, text: false });
+  const lines = [];
+  (data.blocks || []).forEach(b => (b.paragraphs || []).forEach(p => (p.lines || []).forEach(l => lines.push(l))));
+  return lines;
+}
+
+/* ---------- утилиты ---------- */
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function makeCanvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function canvasToBlob(c, type, q) { return new Promise(ok => c.toBlob(b => ok(b), type || 'image/jpeg', q || 0.86)); }
+function freeCanvas(c) { if (c) { c.width = 1; c.height = 1; } }
+const dist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+const rgb = c => `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})`;
+function median(arr) { const s = arr.slice().sort((a, b) => a - b); return s.length ? s[s.length >> 1] : 0; }
+function interArea(a, b) {
+  const w = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0), h = Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0);
+  return w > 0 && h > 0 ? w * h : 0;
+}
+async function pool(items, n, fn) {
+  let i = 0; const out = new Array(items.length);
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => {
+    while (i < items.length) { const k = i++; out[k] = await fn(items[k], k); }
+  }));
+  return out;
+}
+
+/* ---------- перевод (через /api/translate) ---------- */
+class QuotaError extends Error {}
+async function translateTexts(texts, context, tags) {
+  if (!texts.length) return [];
+  for (let attempt = 0; ; attempt++) {
+    let r;
+    try {
+      r = await fetch('/api/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texts, context, tags: !!tags }) });
+    } catch (e) { if (attempt < 3) { await new Promise(s => setTimeout(s, 1200 * (attempt + 1))); continue; } throw new Error('net'); }
+    if (r.status === 456) throw new QuotaError('quota');
+    if (r.status === 413 && texts.length > 1) {          // слишком много текста: делим пополам
+      const mid = texts.length >> 1;
+      return (await translateTexts(texts.slice(0, mid), context, tags)).concat(await translateTexts(texts.slice(mid), context, tags));
+    }
+    if (!r.ok) { if (attempt < 2) { await new Promise(s => setTimeout(s, 1500)); continue; } throw new Error('translate ' + r.status); }
+    return (await r.json()).translations;
+  }
+}
+
+/* =====================================================================
+   1. ПОИСК ТЕКСТОВЫХ БЛОКОВ
+   ===================================================================== */
+const BULLETS = /^[•●▪◦■□➢➤►▶✓✔‣⁃•●-]$/;
+
+// Векторный текст PDF → строки → блоки (абзацы)
+function pdfTextItems(tc, vp, pdfjs, page) {
+  const items = [];
+  for (const it of tc.items) {
+    if (!it.str || !it.str.trim()) continue;
+    const tx = pdfjs.Util.transform(vp.transform, it.transform);
+    if (Math.abs(tx[1]) > 0.01 * Math.abs(tx[0]) || Math.abs(tx[2]) > 0.01 * Math.abs(tx[3])) continue;   // повёрнутый текст не трогаем
+    const h = Math.hypot(tx[2], tx[3]); if (h < 4) continue;
+    const st = tc.styles[it.fontName] || {};
+    const asc = st.ascent || 0.86, desc = st.descent || -0.22;
+    let fontName = '', bold = false, italic = false;
+    try { const f = page.commonObjs.get(it.fontName); fontName = (f && (f.name || f.loadedName)) || ''; bold = !!(f && (f.bold || f.black)); italic = !!(f && f.italic); } catch (e) {}
+    if (/bold|black|heavy|semibold|demi/i.test(fontName)) bold = true;
+    if (/italic|oblique/i.test(fontName)) italic = true;
+    items.push({ x0: tx[4], x1: tx[4] + it.width * vp.scale, base: tx[5], top: tx[5] - h * asc, bot: tx[5] - h * desc, h, str: it.str, bold, italic });
+  }
+  return items;
+}
+
+function itemsToLines(items) {
+  items.sort((a, b) => a.base - b.base || a.x0 - b.x0);
+  const clusters = [];
+  for (const it of items) {
+    const c = clusters[clusters.length - 1];
+    if (c && Math.abs(it.base - c.base) < 0.4 * Math.min(it.h, c.h)) { c.items.push(it); }
+    else clusters.push({ base: it.base, h: it.h, items: [it] });
+  }
+  const lines = [];
+  for (const c of clusters) {
+    c.items.sort((a, b) => a.x0 - b.x0);
+    let cur = null;
+    for (const it of c.items) {
+      const gap = cur ? it.x0 - cur.x1 : 0;
+      if (!cur || gap > Math.max(1.6 * it.h, 1.6 * cur.h)) { cur = { items: [], x0: it.x0, x1: it.x1, top: it.top, bot: it.bot, base: it.base, h: it.h, text: '' }; lines.push(cur); }
+      if (cur.items.length) {
+        const prev = cur.items[cur.items.length - 1];
+        const g = it.x0 - prev.x1;
+        if (g > 0.13 * it.h && !/\s$/.test(cur.text) && !/^\s/.test(it.str)) cur.text += ' ';
+      }
+      cur.items.push(it); cur.text += it.str;
+      cur.x1 = Math.max(cur.x1, it.x1); cur.top = Math.min(cur.top, it.top); cur.bot = Math.max(cur.bot, it.bot); cur.h = Math.max(cur.h, it.h);
+    }
+  }
+  // маркеры списков оставляем как есть
+  for (const l of lines) {
+    const first = l.items[0];
+    if (first && BULLETS.test(first.str.trim()) && l.items.length > 1) {
+      l.bullet = true; l.items.shift(); const nf = l.items[0];
+      l.x0 = nf.x0; l.text = l.items.map(i => i.str).join('').replace(/^\s+/, '');
+    } else if (/^[•●▪◦■➢►•]\s+/.test(l.text)) { l.bulletInline = true; }
+    l.text = l.text.replace(/\s+/g, ' ').trim();
+    l.bold = l.items.filter(i => i.bold).length > l.items.length / 2;
+    l.italic = l.items.filter(i => i.italic).length > l.items.length / 2;
+  }
+  return lines.filter(l => l.text);
+}
+
+function linesToBlocks(lines, opts) {
+  const o = Object.assign({ gap: 0.95, align: 1.2 }, opts || {});
+  lines.sort((a, b) => a.top - b.top || a.x0 - b.x0);
+  const blocks = [];
+  for (const l of lines) {
+    let best = null;
+    for (const b of blocks) {
+      const last = b.lines[b.lines.length - 1];
+      const h = Math.max(l.h, last.h);
+      const vgap = l.top - last.bot;
+      if (vgap < -0.35 * h || vgap > o.gap * h) continue;
+      const ratio = l.h / last.h; if (ratio < 0.8 || ratio > 1.25) continue;
+      if (l.bold !== last.bold && l.text.length > 3 && last.text.length > 3) continue;
+      if (l.bullet || l.bulletInline) continue;
+      if (l.x1 < b.x0 || l.x0 > b.x1) continue;
+      const leftOk = Math.abs(l.x0 - b.x0) < o.align * h;
+      const centerOk = Math.abs((l.x0 + l.x1) / 2 - (b.x0 + b.x1) / 2) < o.align * h;
+      const rightOk = Math.abs(l.x1 - b.x1) < o.align * h;
+      if (!(leftOk || centerOk || rightOk)) continue;
+      // строка не должна быть явно отдельным заголовком над абзацем
+      if (!best || vgap < best.vgap) best = { b, vgap };
+    }
+    if (best) { const b = best.b; b.lines.push(l); b.x0 = Math.min(b.x0, l.x0); b.x1 = Math.max(b.x1, l.x1); b.y1 = Math.max(b.y1, l.bot); }
+    else blocks.push({ lines: [l], x0: l.x0, x1: l.x1, y0: l.top, y1: l.bot });
+  }
+  for (const b of blocks) {
+    const ls = b.lines;
+    b.size = median(ls.map(l => l.h));
+    b.bold = ls.filter(l => l.bold).length > ls.length / 2;
+    b.italic = ls.filter(l => l.italic).length > ls.length / 2;
+    let text = '';
+    ls.forEach((l, i) => {
+      if (i && /[-‐]$/.test(text) && /^\p{Ll}/u.test(l.text)) text = text.replace(/[-‐]$/, '') + l.text;   // перенос слова
+      else text += (i ? ' ' : '') + l.text;
+    });
+    b.text = text;
+    b.pitch = ls.length > 1 ? (ls[ls.length - 1].base - ls[0].base) / (ls.length - 1) : b.size * 1.2;
+    // выравнивание
+    if (ls.length > 1) {
+      const sd = a => { const m = a.reduce((x, y) => x + y, 0) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / a.length); };
+      const L = sd(ls.map(l => l.x0)), C = sd(ls.map(l => (l.x0 + l.x1) / 2)), R = sd(ls.map(l => l.x1));
+      b.align = (C < L * 0.6 && C < R) ? 'center' : (R < L * 0.6 ? 'right' : 'left');
+    } else b.align = 'left';
+  }
+  return blocks;
+}
+
+// Где на странице лежат картинки (по списку команд рисования PDF)
+async function pdfImageRects(page, vp, pdfjs) {
+  const ops = await page.getOperatorList();
+  const O = pdfjs.OPS, U = pdfjs.Util;
+  let ctm = [1, 0, 0, 1, 0, 0]; const stack = []; const rects = [];
+  for (let i = 0; i < ops.fnArray.length; i++) {
+    const fn = ops.fnArray[i], a = ops.argsArray[i];
+    if (fn === O.save) stack.push(ctm.slice());
+    else if (fn === O.restore) { if (stack.length) ctm = stack.pop(); }
+    else if (fn === O.transform) ctm = U.transform(ctm, a);
+    else if (fn === O.paintFormXObjectBegin) { stack.push(ctm.slice()); if (a && a[0]) ctm = U.transform(ctm, a[0]); }
+    else if (fn === O.paintFormXObjectEnd) { if (stack.length) ctm = stack.pop(); }
+    else if (fn === O.paintImageXObject || fn === O.paintInlineImageXObject || fn === O.paintImageXObjectRepeat) {
+      const m = U.transform(vp.transform, ctm);
+      const pts = [[0, 0], [1, 0], [0, 1], [1, 1]].map(p => U.applyTransform(p, m));
+      const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+      const r = { x0: clamp(Math.min(...xs), 0, vp.width), y0: clamp(Math.min(...ys), 0, vp.height), x1: clamp(Math.max(...xs), 0, vp.width), y1: clamp(Math.max(...ys), 0, vp.height) };
+      if (r.x1 - r.x0 > 60 && r.y1 - r.y0 > 40) rects.push(r);
+    }
+  }
+  // объединяем дубликаты/вложенные
+  const out = [];
+  rects.sort((a, b) => (b.x1 - b.x0) * (b.y1 - b.y0) - (a.x1 - a.x0) * (a.y1 - a.y0));
+  for (const r of rects) { if (!out.some(o => interArea(o, r) > 0.85 * (r.x1 - r.x0) * (r.y1 - r.y0))) out.push(r); }
+  return out.slice(0, 12);
+}
+
+// Адаптивная бинаризация: текст на фото/градиенте становится чёрным на белом.
+// mode 'dark' — тёмный текст на светлом, 'light' — светлый текст на тёмном.
+function binarize(c, mode) {
+  const w = c.width, h = c.height;
+  const d = c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
+  const lum = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) lum[i] = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11;
+  const W1 = w + 1, I = new Float64Array(W1 * (h + 1));
+  for (let y = 0; y < h; y++) { let row = 0; for (let x = 0; x < w; x++) { row += lum[y * w + x]; I[(y + 1) * W1 + x + 1] = I[y * W1 + x + 1] + row; } }
+  const r = Math.max(12, Math.round(Math.max(w, h) / 55)), K = 22;
+  const out = makeCanvas(w, h), octx = out.getContext('2d'), img = octx.createImageData(w, h), o = img.data;
+  for (let y = 0; y < h; y++) {
+    const y0 = Math.max(0, y - r), y1 = Math.min(h, y + r + 1);
+    for (let x = 0; x < w; x++) {
+      const x0 = Math.max(0, x - r), x1 = Math.min(w, x + r + 1);
+      const mean = (I[y1 * W1 + x1] - I[y0 * W1 + x1] - I[y1 * W1 + x0] + I[y0 * W1 + x0]) / ((y1 - y0) * (x1 - x0));
+      const v = lum[y * w + x];
+      const ink = mode === 'light' ? v > mean + K : v < mean - K;
+      const j = (y * w + x) * 4; o[j] = o[j + 1] = o[j + 2] = ink ? 0 : 255; o[j + 3] = 255;
+    }
+  }
+  octx.putImageData(img, 0, 0);
+  return out;
+}
+function lumStats(c) {
+  const w = c.width, h = c.height, d = c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
+  let s = 0, s2 = 0, n = 0; const step = Math.max(1, Math.floor(Math.sqrt(w * h / 20000))) * 4;
+  for (let i = 0; i < d.length; i += step * 4) { const v = d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11; s += v; s2 += v * v; n++; }
+  const m = s / n; return { mean: m, std: Math.sqrt(Math.max(0, s2 / n - m * m)) };
+}
+
+// OCR области картинки → строки в координатах страницы
+async function ocrRegion(src, r, psm, onOcrLoad) {
+  const w = r.x1 - r.x0, h = r.y1 - r.y0;
+  const long = Math.max(w, h);
+  const k = long < 1300 ? Math.min(2.2, 1600 / long) : 1;
+  const c = makeCanvas(w * k, h * k); const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(src, r.x0, r.y0, w, h, 0, 0, c.width, c.height);
+  // однотонный фон: хватает тёмного текста; фото/градиент/тёмный фон: ищем и светлый текст
+  const st = lumStats(c);
+  const modes = ['dark']; if (st.std > 30 || st.mean < 170) modes.push('light');
+  let raw = [];
+  const cd = ctx.getImageData(0, 0, c.width, c.height).data;
+  for (const m of modes) {
+    const bin = binarize(c, m);
+    const bd = bin.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, bin.width, bin.height).data;
+    let got = await ocrCanvas(bin, psm, onOcrLoad);
+    freeCanvas(bin);
+    // проверка: «буквы» действительно светлее (для light) / темнее (для dark) фона строки.
+    // Иначе это контур тёмного текста, найденный светлым проходом, и т.п.
+    got = got.filter(l => {
+      const bb = l.bbox, W = c.width; let inkS = 0, inkN = 0; const all = [];
+      for (let y = Math.max(0, bb.y0); y < Math.min(c.height, bb.y1); y += 2) for (let x = Math.max(0, bb.x0); x < Math.min(W, bb.x1); x += 2) {
+        const i = (y * W + x) * 4; const v = cd[i] * 0.3 + cd[i + 1] * 0.59 + cd[i + 2] * 0.11; all.push(v);
+        if (bd[i] === 0) { inkS += v; inkN++; }
+      }
+      if (!inkN || !all.length) return false;
+      const med = median(all), ink = inkS / inkN;
+      return m === 'light' ? ink - med > 35 : med - ink > 35;
+    });
+    got.forEach(l => {
+      l.mode = m;
+      // рамка строки — только по нормальным словам (без мусора вроде «| |»)
+      const ws = (l.words || []).filter(wd => wd.confidence > 40 && /[\p{L}\p{N}]/u.test(wd.text));
+      if (ws.length) {
+        l.text = ws.map(wd => wd.text).join(' ');
+        l.bbox = { x0: Math.min(...ws.map(wd => wd.bbox.x0)), y0: Math.min(...ws.map(wd => wd.bbox.y0)), x1: Math.max(...ws.map(wd => wd.bbox.x1)), y1: Math.max(...ws.map(wd => wd.bbox.y1)) };
+        l.words = ws;
+      }
+    });
+    raw = raw.concat(got);
+  }
+  // из пересекающихся вариантов (тёмный/светлый проход) оставляем самый полный и уверенный
+  const area = b => Math.max(1, (b.x1 - b.x0) * (b.y1 - b.y0));
+  const score = l => (l.confidence / 100) * ((l.text || '').replace(/[^\p{L}\p{N}]/gu, '').length);
+  raw = raw.filter(l => l.confidence >= 58);
+  raw.sort((a, b) => score(b) - score(a));
+  const kept = [];
+  for (const l of raw) {
+    if (kept.some(k => interArea(k.bbox, l.bbox) > 0.35 * Math.min(area(k.bbox), area(l.bbox)))) continue;
+    kept.push(l);
+  }
+  raw = kept;
+  freeCanvas(c);
+  const lines = [];
+  for (const l of raw) {
+    const text = (l.text || '').replace(/(^|\s)[|¦!lI1]{1,2}(?=\s|$)/g, ' ').replace(/[|¦]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!text) continue;
+    const letters = (text.match(/\p{L}/gu) || []).length;
+    if (letters < 2) continue;
+    if (l.confidence < 58) continue;
+    // отбрасываем мусор: слишком много «странных» символов
+    if ((text.match(/[^\p{L}\p{N}\s.,:;!?()\-–%'"’/+&=°€$₂²³]/gu) || []).length > text.length * 0.2) continue;
+    const bb = l.bbox;
+    const x0 = r.x0 + bb.x0 / k, x1 = r.x0 + bb.x1 / k, y0 = r.y0 + bb.y0 / k, y1 = r.y0 + bb.y1 / k;
+    const hh = y1 - y0; if (hh < 7) continue;
+    const words = (l.words || []).filter(wd => wd.confidence > 30);
+    const base = r.y0 + (words.length ? median(words.map(wd => wd.baseline ? (wd.baseline.y0 + wd.baseline.y1) / 2 : wd.bbox.y1)) : bb.y1 - (bb.y1 - bb.y0) * 0.2) / k;
+    lines.push({ x0, x1, top: y0, bot: y1, base: Math.min(y1, Math.max(y0 + hh * 0.5, base)), h: hh * 0.92, text, ocr: true, region: r, conf: l.confidence, mode: l.mode });
+  }
+  return lines;
+}
+
+/* =====================================================================
+   2. ЦВЕТА, СТИРАНИЕ, РИСОВАНИЕ
+   ===================================================================== */
+function analyzeBlock(ctx, b, W, H) {
+  const pad = Math.max(3, Math.round(b.size * 0.3));
+  const R = Math.max(6, Math.round(b.size * 0.6));            // окно для локального фона
+  const padX = b.ocr ? Math.ceil(b.size * 0.45) + 2 : pad;
+  const X0 = clamp(Math.floor(b.x0 - padX - R), 0, W - 1), Y0 = clamp(Math.floor(b.y0 - pad - R), 0, H - 1);
+  const X1 = clamp(Math.ceil(b.x1 + padX + R), X0 + 1, W), Y1 = clamp(Math.ceil(b.y1 + pad + R), Y0 + 1, H);
+  const w = X1 - X0, h = Y1 - Y0;
+  const d = ctx.getImageData(X0, Y0, w, h).data;
+  // кольцо вокруг блока → цвет фона и его «пестрота»
+  const ring = [];
+  const ix0 = b.x0 - X0 - 1, ix1 = b.x1 - X0 + 1, iy0 = b.y0 - Y0 - 1, iy1 = b.y1 - Y0 + 1;
+  const step = Math.max(1, Math.round(Math.sqrt(w * h / 30000)));
+  for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) {
+    if (x >= ix0 && x <= ix1 && y >= iy0 && y <= iy1) continue;
+    if (x < ix0 - pad - 3 || x > ix1 + pad + 3 || y < iy0 - pad - 3 || y > iy1 + pad + 3) continue;
+    if (b.region && (x + X0 < b.region.x0 || x + X0 >= b.region.x1 || y + Y0 < b.region.y0 || y + Y0 >= b.region.y1)) continue;   // только внутри картинки
+    const i = (y * w + x) * 4; ring.push([d[i], d[i + 1], d[i + 2]]);
+  }
+  if (!ring.length) ring.push([255, 255, 255]);
+  // самые частые цвета кольца: если 1–2 сплошных цвета (фон + столбик/линия) — фон «однотонный»
+  const bins = new Map();
+  for (const p of ring) { const key = (p[0] >> 4) << 8 | (p[1] >> 4) << 4 | (p[2] >> 4); const e = bins.get(key); if (e) { e.n++; e.s[0] += p[0]; e.s[1] += p[1]; e.s[2] += p[2]; } else bins.set(key, { n: 1, s: [p[0], p[1], p[2]] }); }
+  const top = Array.from(bins.values()).sort((a, b2) => b2.n - a.n);
+  const t1 = top[0], t2 = top[1] || { n: 0 };
+  // соседние ячейки гистограммы (цвет на границе ячеек) считаем одним цветом
+  const c1 = t1.s.map(v => v / t1.n), c2 = t2.n ? t2.s.map(v => v / t2.n) : c1;
+  const share1 = ring.filter(p => dist(p, c1) < 14).length / ring.length;
+  const share12 = ring.filter(p => dist(p, c1) < 14 || dist(p, c2) < 14).length / ring.length;
+  let bg = c1, bgVar;
+  if (share1 > 0.5 && share12 > 0.88) bgVar = 0;
+  else { bg = [0, 1, 2].map(k => median(ring.map(p => p[k]))); bgVar = Math.max(10, ring.reduce((a, p) => a + Math.min(120, dist(p, bg)), 0) / ring.length); }
+  b.bg = bg; b.bgVar = bgVar;
+  // маска букв: пиксели, заметно светлее/темнее локального фона
+  const lum = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) lum[i] = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11;
+  const W1 = w + 1, I = new Float64Array(W1 * (h + 1));
+  for (let y = 0; y < h; y++) { let row = 0; for (let x = 0; x < w; x++) { row += lum[y * w + x]; I[(y + 1) * W1 + x + 1] = I[y * W1 + x + 1] + row; } }
+  const K = bgVar < 10 ? 30 : 12;
+  const light = new Uint8Array(w * h), dark = new Uint8Array(w * h);
+  let inL = 0, inD = 0, outL = 0, outD = 0, nIn = 0, nOut = 0;
+  for (let y = 0; y < h; y++) {
+    const ya = Math.max(0, y - R), yb = Math.min(h, y + R + 1);
+    for (let x = 0; x < w; x++) {
+      const xa = Math.max(0, x - R), xb = Math.min(w, x + R + 1);
+      const mean = (I[yb * W1 + xb] - I[ya * W1 + xb] - I[yb * W1 + xa] + I[ya * W1 + xa]) / ((yb - ya) * (xb - xa));
+      const v = lum[y * w + x], i = y * w + x;
+      const isIn = x >= ix0 && x <= ix1 && y >= iy0 && y <= iy1;
+      if (v > mean + K) { light[i] = 1; isIn ? inL++ : outL++; }
+      else if (v < mean - K) { dark[i] = 1; isIn ? inD++ : outD++; }
+      isIn ? nIn++ : nOut++;
+    }
+  }
+  // однотонный фон: буквы = всё, что далеко от цвета фона
+  let mode = b.mode;
+  if (!mode) {
+    // буквы — это «выбросы» за пределы яркостей окружающего фона: смотрим, каких больше, светлых или тёмных
+    const rl = []; for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) { if (x >= ix0 && x <= ix1 && y >= iy0 && y <= iy1) continue; rl.push(lum[y * w + x]); }
+    rl.sort((p, q) => p - q);
+    const lo = rl[Math.floor(rl.length * 0.03)] || 0, hi = rl[Math.floor(rl.length * 0.97)] || 255;
+    let nL = 0, nD = 0;
+    for (let y = Math.max(0, Math.floor(iy0)); y < Math.min(h, Math.ceil(iy1)); y++) for (let x = Math.max(0, Math.floor(ix0)); x < Math.min(w, Math.ceil(ix1)); x++) {
+      const v = lum[y * w + x]; if (v > hi + 8) nL++; else if (v < lo - 8) nD++;
+    }
+    if (nL === nD) { const sL = inL / Math.max(1, nIn) - outL / Math.max(1, nOut), sD = inD / Math.max(1, nIn) - outD / Math.max(1, nOut); mode = sL > sD ? 'light' : 'dark'; }
+    else mode = nL > nD ? 'light' : 'dark';
+  }
+  const mask = mode === 'light' ? light : dark;
+  if (bgVar < 10) for (let i = 0; i < w * h; i++) mask[i] = dist([d[i * 4], d[i * 4 + 1], d[i * 4 + 2]], bg) > 50 ? 1 : 0;
+  b._uniformRefine = bgVar < 10;
+  // цвет текста: самые «сильные» пиксели маски внутри блока
+  const cand = [];
+  for (let y = Math.max(0, Math.floor(iy0)); y < Math.min(h, Math.ceil(iy1)); y++) for (let x = Math.max(0, Math.floor(ix0)); x < Math.min(w, Math.ceil(ix1)); x++) {
+    const i = y * w + x; if (!mask[i]) continue;
+    cand.push([d[i * 4], d[i * 4 + 1], d[i * 4 + 2], Math.abs(lum[i] - (bg[0] * 0.3 + bg[1] * 0.59 + bg[2] * 0.11))]);
+  }
+  let fg;
+  if (cand.length > 8) {
+    cand.sort((p, q) => q[3] - p[3]);
+    const top = cand.slice(0, Math.max(4, Math.round(cand.length * 0.4)));
+    fg = [0, 1, 2].map(k => top.reduce((a, p) => a + p[k], 0) / top.length);
+  } else { const l = bg[0] * 0.3 + bg[1] * 0.59 + bg[2] * 0.11; fg = l > 140 ? [20, 20, 20] : [245, 245, 245]; }
+  b.fg = fg;
+  if (b._uniformRefine) {      // на однотонном фоне буквы — это пиксели цвета текста, а не любые «не фоновые» (линии, столбики)
+    const lim = Math.max(90, 0.45 * dist(fg, bg));
+    for (let i = 0; i < w * h; i++) if (mask[i] && dist([d[i * 4], d[i * 4 + 1], d[i * 4 + 2]], fg) > lim) mask[i] = 0;
+  }
+  b.ink = cand.length / Math.max(1, (ix1 - ix0) * (iy1 - iy0));
+  if (b.ocr && b.bold === undefined) b.bold = b.ink > 0.22;
+  b._m = { X0, Y0, w, h, mask };
+}
+
+// Стирание: однотонный фон — заливка; сложный фон (градиент, фото) — закрашиваем только буквы,
+// подбирая цвет из соседних пикселей фона (нормированное размытие)
+function eraseBlock(ctx, b, W, H) {
+  const pad = Math.ceil(b.size * (b.ocr ? 0.14 : 0.16)) + 2, padX = b.ocr ? Math.ceil(b.size * 0.45) + 2 : pad;
+  const { X0, Y0, w, h, mask } = b._m;
+  const uniform = b.bgVar < 10;
+  const img = ctx.getImageData(X0, Y0, w, h), d = img.data;
+  // ограничиваем маску областью блока и расширяем её (антиалиасинг букв)
+  // «семена» маски — только внутри рамки текста (+2px), дальше их расширяем на rr
+  const sm = b.ocr ? 3 : 2;
+  const sx = b.ocr && !uniform ? padX * 0.5 : sm;
+  let bx0 = Math.floor(b.x0 - X0 - sx), bx1 = Math.ceil(b.x1 - X0 + sx), by0 = Math.floor(b.y0 - Y0 - sm), by1 = Math.ceil(b.y1 - Y0 + sm);
+  if (b.region) {           // не выходим за пределы картинки
+    bx0 = Math.max(bx0, Math.ceil(b.region.x0 - X0)); bx1 = Math.min(bx1, Math.floor(b.region.x1 - X0));
+    by0 = Math.max(by0, Math.ceil(b.region.y0 - Y0)); by1 = Math.min(by1, Math.floor(b.region.y1 - Y0));
+  }
+  const rr = Math.max(2, Math.round(b.size * (b.ocr && !uniform ? 0.24 : 0.12)));
+  const m = new Uint8Array(w * h);
+  for (let y = Math.max(0, by0); y < Math.min(h, by1); y++) for (let x = Math.max(0, bx0); x < Math.min(w, bx1); x++) {
+    if (!mask[y * w + x]) continue;
+    for (let dy = -rr; dy <= rr; dy++) { const yy = y + dy; if (yy < 0 || yy >= h) continue;
+      for (let dx = -rr; dx <= rr; dx++) { const xx = x + dx; if (xx >= 0 && xx < w) m[yy * w + xx] = 1; } }
+  }
+  if (b.region) for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (x + X0 < b.region.x0 || x + X0 >= b.region.x1 || y + Y0 < b.region.y0 || y + Y0 >= b.region.y1) m[y * w + x] = 0;
+  }
+  if (uniform) {            // однотонный фон: закрашиваем буквы цветом фона, соседние линии и фигуры не трогаем
+    for (let i = 0; i < w * h; i++) if (m[i]) { d[i * 4] = b.bg[0]; d[i * 4 + 1] = b.bg[1]; d[i * 4 + 2] = b.bg[2]; }
+    ctx.putImageData(img, X0, Y0); return;
+  }
+  // пиксели рядом с буквами (ореол сглаживания) не берём как образец фона
+  const far = new Uint8Array(w * h); const r2 = rr + 1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (!m[y * w + x]) continue;
+    for (let dy = -r2; dy <= r2; dy += 1) { const yy = y + dy; if (yy < 0 || yy >= h) continue;
+      for (let dx = -r2; dx <= r2; dx += 1) { const xx = x + dx; if (xx >= 0 && xx < w) far[yy * w + xx] = 1; } }
+  }
+  // «push-pull»: строим пирамиду из известных пикселей фона и плавно заполняем дыру сверху вниз
+  let lw = w, lh = h;
+  let C = new Float32Array(w * h * 3), Wt = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) if (!far[i]) { C[i * 3] = d[i * 4]; C[i * 3 + 1] = d[i * 4 + 1]; C[i * 3 + 2] = d[i * 4 + 2]; Wt[i] = 1; }
+  const levels = [{ C, Wt, w: lw, h: lh }];
+  while (lw > 2 || lh > 2) {
+    const nw = Math.max(1, Math.ceil(lw / 2)), nh = Math.max(1, Math.ceil(lh / 2));
+    const NC = new Float32Array(nw * nh * 3), NW = new Float32Array(nw * nh);
+    for (let y = 0; y < lh; y++) for (let x = 0; x < lw; x++) {
+      const i = y * lw + x, wt = Wt[i]; if (!wt) continue;
+      const j = (y >> 1) * nw + (x >> 1);
+      NW[j] += wt; NC[j * 3] += C[i * 3] * wt; NC[j * 3 + 1] += C[i * 3 + 1] * wt; NC[j * 3 + 2] += C[i * 3 + 2] * wt;
+    }
+    for (let j = 0; j < nw * nh; j++) if (NW[j]) { NC[j * 3] /= NW[j]; NC[j * 3 + 1] /= NW[j]; NC[j * 3 + 2] /= NW[j]; NW[j] = Math.min(1, NW[j]); }
+    C = NC; Wt = NW; lw = nw; lh = nh; levels.push({ C, Wt, w: lw, h: lh });
+    if (levels.length > 14) break;
+  }
+  for (let L = levels.length - 2; L >= 0; L--) {
+    const cur = levels[L], up = levels[L + 1];
+    for (let y = 0; y < cur.h; y++) for (let x = 0; x < cur.w; x++) {
+      const i = y * cur.w + x; if (cur.Wt[i] >= 1) continue;
+      // билинейно из уровня выше
+      const fx = Math.min(up.w - 1, Math.max(0, (x - 0.5) / 2)), fy = Math.min(up.h - 1, Math.max(0, (y - 0.5) / 2));
+      const x0 = Math.floor(fx), y0 = Math.floor(fy), x1 = Math.min(up.w - 1, x0 + 1), y1 = Math.min(up.h - 1, y0 + 1), tx = fx - x0, ty = fy - y0;
+      const wt = cur.Wt[i];
+      for (let k = 0; k < 3; k++) {
+        const v = (up.C[(y0 * up.w + x0) * 3 + k] * (1 - tx) + up.C[(y0 * up.w + x1) * 3 + k] * tx) * (1 - ty)
+                + (up.C[(y1 * up.w + x0) * 3 + k] * (1 - tx) + up.C[(y1 * up.w + x1) * 3 + k] * tx) * ty;
+        cur.C[i * 3 + k] = cur.C[i * 3 + k] * wt + v * (1 - wt);
+      }
+      cur.Wt[i] = 1;
+    }
+  }
+  const F = levels[0].C;
+  // зерно: стандартное отклонение яркости фона вокруг блока
+  let ss = 0, s2 = 0, nn = 0;
+  for (let i = 0; i < w * h; i += 3) if (!far[i]) { const l = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11; ss += l; s2 += l * l; nn++; }
+  const grainBase = nn ? Math.sqrt(Math.max(0, s2 / nn - (ss / nn) ** 2)) : 0;
+  // локальное зерно ≈ разница пикселя и его сглаженной версии; берём долю от общего разброса
+  const grain = Math.min(14, grainBase * 0.18);
+  for (let i = 0; i < w * h; i++) {
+    if (!m[i]) continue;
+    const n = grain ? (Math.random() + Math.random() + Math.random() - 1.5) * grain : 0;
+    d[i * 4] = clamp(F[i * 3] + n, 0, 255); d[i * 4 + 1] = clamp(F[i * 3 + 1] + n, 0, 255); d[i * 4 + 2] = clamp(F[i * 3 + 2] + n, 0, 255);
+  }
+  ctx.putImageData(img, X0, Y0);
+}
+
+function wrapText(ctx, text, maxW) {
+  const words = text.split(/\s+/).filter(Boolean); const lines = []; let cur = '';
+  for (let w of words) {
+    const test = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(test).width <= maxW || !cur) {
+      if (!cur && ctx.measureText(w).width > maxW) {      // очень длинное слово
+        let part = '';
+        for (const ch of w) { if (ctx.measureText(part + ch).width > maxW && part) { lines.push(part); part = ch; } else part += ch; }
+        cur = part; continue;
+      }
+      cur = test;
+    } else { lines.push(cur); cur = w; }
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function drawBlock(ctx, b, text, W, H) {
+  const weight = b.bold ? '700' : '400', style = b.italic ? 'italic ' : '';
+  const origW = b.x1 - b.x0, origH = b.y1 - b.y0;
+  // сколько места можно занять вправо: до края картинки / страницы
+  const limitR = b.region ? b.region.x1 - 4 : W - Math.max(12, W * 0.03);
+  const limitL = b.region ? b.region.x0 + 4 : Math.max(12, W * 0.03);
+  let maxW = origW;
+  if (b.lines.length === 1) {
+    const grow = b.ocr ? 1.9 : 1.35;
+    if (b.align === 'center') maxW = Math.min(origW * grow, 2 * Math.min((b.x0 + b.x1) / 2 - limitL, limitR - (b.x0 + b.x1) / 2));
+    else maxW = Math.min(origW * grow, limitR - b.x0);
+    maxW = Math.max(maxW, origW);
+  }
+  const pitchK = clamp(b.pitch / b.size, 1.05, 1.6);
+  let size = b.size * 0.9, lines;
+  const minSize = b.size * 0.5;
+  for (let i = 0; i < 40; i++) {
+    ctx.font = `${style}${weight} ${size}px ${FONT}`;
+    lines = wrapText(ctx, text, maxW);
+    const hh = size + (lines.length - 1) * size * pitchK;
+    const allowH = Math.max(origH * 1.08, b.size * 1.1) + (b.ocr && b.lines.length === 1 ? b.size * 1.2 : 0);
+    const tooMany = b.lines.length === 1 && lines.length > 1 && size > b.size * (b.ocr ? 0.8 : 0.72);
+    if ((hh <= allowH && !tooMany) || size <= minSize) break;
+    size *= 0.95;
+  }
+  ctx.fillStyle = rgb(b.fg); ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = b.align;
+  const x = b.align === 'center' ? (b.x0 + b.x1) / 2 : b.align === 'right' ? b.x1 : b.x0;
+  // первая базовая линия — как у оригинала (но так, чтобы текст не вылез вверх)
+  const firstBase = Math.max(b.lines[0].base - (b.size - size) * 0.5, b.y0 + size * 0.8);
+  let maxLineW = 0;
+  lines.forEach((ln, i) => { ctx.fillText(ln, x, firstBase + i * size * pitchK); maxLineW = Math.max(maxLineW, ctx.measureText(ln).width); });
+  const bx0 = b.align === 'center' ? x - maxLineW / 2 : b.align === 'right' ? x - maxLineW : x;
+  return { x0: Math.min(b.x0, bx0), y0: b.y0, x1: Math.max(b.x1, bx0 + maxLineW), y1: Math.max(b.y1, firstBase + (lines.length - 1) * size * pitchK + size * 0.25) };
+}
+
+/* =====================================================================
+   3. ОБРАБОТКА СТРАНИЦЫ (общая для PDF и картинок)
+   ===================================================================== */
+async function translatePageCanvas(src, blocks, opts) {
+  const W = src.width, H = src.height;
+  const ctx = src.getContext('2d', { willReadFrequently: true });
+  blocks = blocks.filter(b => LETTER.test(b.text) && b.text.length > 1);
+  const out = { blocks: [] };
+  if (!blocks.length) return out;
+  blocks.forEach(b => analyzeBlock(ctx, b, W, H));
+  // Текст на фото/неоднородном фоне принимаем только если он «настоящий»: длинный и уверенно распознан.
+  // Иначе блики и узоры превращаются в слова вроде «ANS OM».
+  blocks = blocks.filter(b => {
+    if (!b.ocr) return true;
+    const letters = (b.text.match(/\p{L}/gu) || []).length;
+    const conf = Math.min(...b.lines.map(l => l.conf || 0));
+    const longWord = /\p{L}{4,}/u.test(b.text);
+    if (b.bgVar > 0) return letters >= 8 && longWord && conf >= 80;
+    return conf >= 65 && (longWord || letters >= 2 && conf >= 85);
+  });
+  if (!blocks.length) return out;
+  const context = ((opts.context ? opts.context + '\n' : '') + blocks.map(b => b.text).join('\n')).slice(-3800);
+  if (opts.onStage) opts.onStage('translate');
+  const tr = await translateTexts(blocks.map(b => b.text), context);
+  if (opts.onStage) opts.onStage('paint');
+  // сначала стираем всё, потом пишем (чтобы соседние блоки не затирали друг друга)
+  const todo = blocks.map((b, i) => ({ b, t: (tr[i] || '').trim() })).filter(x => x.t && x.t.replace(/\s/g, '') !== x.b.text.replace(/\s/g, ''));
+  todo.forEach(x => eraseBlock(ctx, x.b, W, H));
+  blocks.forEach(b => { b._m = null; });
+  todo.forEach(x => {
+    const box = drawBlock(ctx, x.b, x.t, W, H);
+    out.blocks.push({ x0: +(box.x0 / W).toFixed(4), y0: +(box.y0 / H).toFixed(4), x1: +(box.x1 / W).toFixed(4), y1: +(box.y1 / H).toFixed(4), sv: x.b.text, uk: x.t });
+  });
+  return out;
+}
+
+async function ocrBlocksFor(canvas, regions, avoid, onOcrLoad) {
+  let lines = [];
+  for (const r of regions) {
+    const got = await ocrRegion(canvas, r, 11, onOcrLoad);
+    lines = lines.concat(got);
+  }
+  // убираем то, что уже есть как векторный текст
+  lines = lines.filter(l => !avoid.some(a => interArea(a, l.top !== undefined ? { x0: l.x0, x1: l.x1, y0: l.top, y1: l.bot } : l) > 0.3 * (l.x1 - l.x0) * (l.bot - l.top)));
+  const blocks = linesToBlocks(lines, { gap: 0.7, align: 0.9 });
+  blocks.forEach(b => { b.ocr = true; b.region = b.lines[0].region; b.bold = undefined; b.mode = b.lines[0].mode; });
+  return blocks;
+}
+
+/* ---------- PDF ---------- */
+async function processPdf(buf, ui) {
+  const pdfjs = await getPdfjs();
+  const pdf = await pdfjs.getDocument({ data: new Uint8Array(buf), isEvalSupported: false, useSystemFonts: true }).promise;
+  const n = pdf.numPages; const pages = new Array(n);
+  ui.total(n);
+  const pending = [];
+  for (let i = 1; i <= n; i++) {
+    if (ui.cancelled()) throw new Error('cancelled');
+    ui.stage(i, 'read');
+    const page = await pdf.getPage(i);
+    const vp1 = page.getViewport({ scale: 1 });
+    const scale = clamp(TARGET_LONG / Math.max(vp1.width, vp1.height), 1, 4);
+    const vp = page.getViewport({ scale });
+    const canvas = makeCanvas(vp.width, vp.height);
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    const tc = await page.getTextContent();
+    const lines = itemsToLines(pdfTextItems(tc, vp, pdfjs, page));
+    const vblocks = linesToBlocks(lines);
+    let regions = [];
+    try { regions = await pdfImageRects(page, vp, pdfjs); } catch (e) { regions = []; }
+    let oblocks = [];
+    if (regions.length) {
+      ui.stage(i, 'ocr');
+      oblocks = await ocrBlocksFor(canvas, regions, vblocks.map(b => ({ x0: b.x0, x1: b.x1, y0: b.y0, y1: b.y1 })), p => ui.ocrLoad(p));
+    }
+    page.cleanup();
+    const svBlob = await canvasToBlob(canvas, 'image/jpeg', 0.8);
+    const blocks = vblocks.concat(oblocks);
+    // перевод и рисование идут параллельно с чтением следующих страниц
+    const job = (async () => {
+      const res = await translatePageCanvas(canvas, blocks, { onStage: s => ui.stage(i, s) });
+      const ukBlob = res.blocks.length ? await canvasToBlob(canvas, 'image/jpeg', 0.86) : svBlob;
+      pages[i - 1] = { w: canvas.width, h: canvas.height, ukBlob, svBlob, blocks: res.blocks };
+      freeCanvas(canvas); ui.done(i);
+    })();
+    pending.push(job);
+    if (pending.length >= 3) await pending.shift();
+  }
+  await Promise.all(pending);
+  pdf.destroy();
+  return pages;
+}
+
+/* ---------- картинка ---------- */
+async function loadImage(blob) {
+  const url = URL.createObjectURL(blob);
+  try {
+    const img = new Image(); img.decoding = 'async'; img.src = url; await img.decode(); return img;
+  } finally { setTimeout(() => URL.revokeObjectURL(url), 2000); }
+}
+async function processImageBlob(blob, ui, i, keepSize, context) {
+  const img = await loadImage(blob);
+  let w = img.naturalWidth, h = img.naturalHeight;
+  // маленькие картинки увеличиваем: OCR и новый текст получаются чище
+  const k = keepSize ? clamp(1800 / Math.max(w, h), 1, 2.5) : Math.min(1, 2400 / Math.max(w, h));
+  const canvas = makeCanvas(w * k, h * k); const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  if (ui) ui.stage(i, 'ocr');
+  const blocks = await ocrBlocksFor(canvas, [{ x0: 0, y0: 0, x1: canvas.width, y1: canvas.height }], [], p => ui && ui.ocrLoad(p));
+  const svBlob = keepSize ? null : await canvasToBlob(canvas, 'image/jpeg', 0.8);
+  const res = await translatePageCanvas(canvas, blocks, { onStage: s => ui && ui.stage(i, s), context });
+  return { canvas, svBlob, res };
+}
+async function processImage(file, ui) {
+  ui.total(1); ui.stage(1, 'read');
+  const { canvas, svBlob, res } = await processImageBlob(file, ui, 1, false);
+  const ukBlob = res.blocks.length ? await canvasToBlob(canvas, 'image/jpeg', 0.88) : svBlob;
+  const page = { w: canvas.width, h: canvas.height, ukBlob, svBlob, blocks: res.blocks };
+  freeCanvas(canvas); ui.done(1);
+  return [page];
+}
+
+/* =====================================================================
+   4. PPTX / DOCX: перевод внутри файла
+   ===================================================================== */
+const OFFICE = {
+  pptx: { parts: /^ppt\/(slides\/slide\d+|diagrams\/(data|drawing)\d+|charts\/chart\d+|notesSlides\/notesSlide\d+)\.xml$/, ns: 'http://schemas.openxmlformats.org/drawingml/2006/main', p: 'p', r: 'r', t: 't', br: 'br', rPr: 'rPr', media: /^ppt\/media\/[^/]+\.(png|jpe?g)$/i },
+  docx: { parts: /^word\/(document|header\d+|footer\d+|footnotes|endnotes)\.xml$/, ns: 'http://schemas.openxmlformats.org/wordprocessingml/2006/main', p: 'p', r: 'r', t: 't', br: 'br', rPr: 'rPr', media: /^word\/media\/[^/]+\.(png|jpe?g)$/i }
+};
+const escXml = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function officeParagraphs(doc, cfg) {
+  const ps = Array.from(doc.getElementsByTagNameNS(cfg.ns, cfg.p));
+  const out = [];
+  for (const p of ps) {
+    // руны текста в порядке документа (включая руны внутри гиперссылок docx)
+    const runs = Array.from(p.getElementsByTagNameNS(cfg.ns, cfg.r)).filter(r => {
+      let a = r.parentNode; while (a && a !== p) { if (a.localName === cfg.p) return false; a = a.parentNode; } return true;
+    });
+    const parts = runs.map(r => { const ts = Array.from(r.getElementsByTagNameNS(cfg.ns, cfg.t)); return { r, ts, text: ts.map(t => t.textContent).join('') }; }).filter(x => x.ts.length);
+    const full = parts.map(x => x.text).join('');
+    if (!LETTER.test(full) || full.trim().length < 2) continue;
+    out.push({ p, parts, full });
+  }
+  return out;
+}
+// Подпись, разбитая на строки абзацами («Endoplasmatiskt» / «nätverk»), переводится как одна фраза
+function mergeLabelParagraphs(pars) {
+  const bodyOf = n => { while (n && n.localName !== 'txBody') n = n.parentNode; return n; };
+  const out = []; let i = 0;
+  while (i < pars.length) {
+    const body = bodyOf(pars[i].p);
+    let j = i + 1;
+    while (j < pars.length && bodyOf(pars[j].p) === body && pars[j].full.trim().length <= 24 && /^\p{Ll}/u.test(pars[j].full.trim())
+           && pars[j - 1].full.trim().length <= 24 && !/[.!?:;]$/.test(pars[j - 1].full.trim())) j++;
+    if (j - i > 1) {
+      const group = pars.slice(i, j);
+      const first = group[0];
+      first.full = group.map(g => g.full.trim()).join(' ');
+      first.parts = [{ r: first.parts[0].r, ts: first.parts.flatMap(x => x.ts), text: first.full }];
+      first.merged = group.slice(1);
+      out.push(first);
+    } else out.push(pars[i]);
+    i = j;
+  }
+  return out;
+}
+function paragraphToTagged(par) {
+  if (par.parts.length === 1) return { tagged: escXml(par.parts[0].text), simple: true };
+  return { tagged: par.parts.map((x, i) => `<r${i}>${escXml(x.text)}</r${i}>`).join(''), simple: false };
+}
+function applyTranslation(par, translated, simple) {
+  const parts = par.parts;
+  const setText = (x, s) => { x.ts[0].textContent = s; x.ts[0].setAttribute('xml:space', 'preserve'); for (let k = 1; k < x.ts.length; k++) x.ts[k].textContent = ''; };
+  if (simple) {
+    setText(parts[0], translated.replace(/<[^>]+>/g, ''));
+    (par.merged || []).forEach(m => m.p.parentNode && m.p.parentNode.removeChild(m.p));
+    return;
+  }
+  // разбираем <rN>...</rN>; текст вне тегов прибавляем к предыдущему фрагменту
+  const pieces = new Array(parts.length).fill(''); let last = 0;
+  const re = /<r(\d+)>([\s\S]*?)<\/r\1>|([^<]+)|<[^>]*>/g; let m;
+  while ((m = re.exec(translated))) {
+    if (m[1] !== undefined) { const k = +m[1]; if (k < parts.length) { pieces[k] += m[2].replace(/<[^>]+>/g, ''); last = k; } }
+    else if (m[3]) pieces[last] += m[3];
+  }
+  const unesc = s => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  parts.forEach((x, k) => setText(x, unesc(pieces[k])));
+}
+// Подгонка: считаем, сколько места займёт перевод в рамке, и уменьшаем размер шрифта в XML.
+let _mctx = null;
+function textWidthPt(text, sizePt, bold) {
+  if (!_mctx) _mctx = makeCanvas(10, 10).getContext('2d');
+  _mctx.font = `${bold ? 'bold ' : ''}100px Arial, Helvetica, sans-serif`;
+  return _mctx.measureText(text).width * sizePt / 100;
+}
+function fitPptxBodies(doc, cfg, bodies) {
+  if (cfg !== OFFICE.pptx) return;
+  const A = cfg.ns, EMU = 12700;
+  for (const body of bodies) {
+    const sp = body.parentNode;
+    const xfrm = sp && sp.getElementsByTagNameNS(A, 'xfrm')[0];
+    const ext = xfrm && Array.from(xfrm.childNodes).find(n => n.localName === 'ext');
+    const bodyPr = Array.from(body.childNodes).find(n => n.localName === 'bodyPr');
+    const rPrs = Array.from(body.getElementsByTagNameNS(A, 'rPr')).concat(Array.from(body.getElementsByTagNameNS(A, 'endParaRPr')));
+    const sizes = rPrs.map(r => +r.getAttribute('sz') || 0).filter(Boolean);
+    if (!ext || !sizes.length) {                 // размер рамки/шрифта неизвестен (наследуется от макета) — просим PowerPoint ужать сам
+      if (bodyPr) {
+        Array.from(bodyPr.childNodes).forEach(n => { if (/^(noAutofit|spAutoFit|normAutofit)$/.test(n.localName)) bodyPr.removeChild(n); });
+        bodyPr.insertBefore(doc.createElementNS(A, 'a:normAutofit'), bodyPr.firstChild);
+      }
+      continue;
+    }
+    const ins = k => (bodyPr && bodyPr.hasAttribute(k) ? +bodyPr.getAttribute(k) : (k[0] === 'l' || k[0] === 'r' ? 91440 : 45720)) / EMU;
+    const W = +ext.getAttribute('cx') / EMU - ins('lIns') - ins('rIns');
+    const H = +ext.getAttribute('cy') / EMU - ins('tIns') - ins('bIns');
+    if (W < 10) continue;
+    const paras = Array.from(body.getElementsByTagNameNS(A, 'p')).map(p => {
+      const runs = Array.from(p.getElementsByTagNameNS(A, 'r'));
+      const text = runs.map(r => Array.from(r.getElementsByTagNameNS(A, 't')).map(t => t.textContent).join('')).join('');
+      const sz = (runs.map(r => { const rp = Array.from(r.childNodes).find(n => n.localName === 'rPr'); return rp && +rp.getAttribute('sz'); }).find(Boolean)) || sizes[0];
+      const bold = runs.some(r => { const rp = Array.from(r.childNodes).find(n => n.localName === 'rPr'); return rp && rp.getAttribute('b') === '1'; });
+      return { text, sz: sz / 100, bold };
+    });
+    const need = f => {
+      let h = 0, wordOk = true;
+      for (const p of paras) {
+        const s = p.sz * f;
+        if (!p.text.trim()) { h += s * 1.2; continue; }
+        const longest = Math.max(...p.text.split(/\s+/).map(w => textWidthPt(w, s, p.bold)));
+        if (longest > W * 1.02) wordOk = false;
+        // перенос по словам
+        let lines = 1, cur = 0; const sp = textWidthPt(' ', s, p.bold);
+        for (const w of p.text.split(/\s+/).filter(Boolean)) { const ww = textWidthPt(w, s, p.bold); if (cur && cur + sp + ww > W) { lines++; cur = ww; } else cur += (cur ? sp : 0) + ww; }
+        h += lines * s * 1.2;
+      }
+      return { h, wordOk };
+    };
+    // однострочная подпись (рамка высотой в одну строку): не переносим на вторую строку — она налезет на соседей.
+    // Уменьшаем шрифт максимум до 75 %, а если всё равно не влезает — разрешаем строке выйти вбок.
+    const maxSz = Math.max(...paras.map(p => p.sz));
+    if (paras.length === 1 && H < maxSz * 1.2 * 1.6) {
+      const p = paras[0], w = textWidthPt(p.text, p.sz, p.bold);
+      // запас 15 %: у учителя может не быть шрифта презентации, замена обычно шире
+      let f1 = Math.max(0.75, Math.min(1, W * 0.85 / Math.max(1, w)));
+      if (f1 < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f1 / 50) * 50))); });
+      if (w * f1 > W * 0.85 && bodyPr) bodyPr.setAttribute('wrap', 'none');
+      continue;
+    }
+    const allow = Math.max(H, need(1).h > H ? Math.min(need(1).h, H * 1.25) : H) * 1.04;
+    let f = 1;
+    for (let k = 0; k < 30; k++) { const r = need(f); if (r.wordOk && r.h <= allow) break; f *= 0.95; if (f < 0.5) { f = 0.5; break; } }
+    if (f < 0.995) rPrs.forEach(r => { const v = +r.getAttribute('sz'); if (v) r.setAttribute('sz', String(Math.max(600, Math.round(v * f / 50) * 50))); });
+    else continue;
+    // runs без явного размера получают размер явно
+    Array.from(body.getElementsByTagNameNS(A, 'r')).forEach(r => {
+      let rp = Array.from(r.childNodes).find(n => n.localName === 'rPr');
+      if (!rp) { rp = doc.createElementNS(A, 'a:rPr'); r.insertBefore(rp, r.firstChild); }
+      if (!rp.getAttribute('sz')) rp.setAttribute('sz', String(Math.max(600, Math.round(sizes[0] * f / 50) * 50)));
+    });
+  }
+}
+async function processOffice(file, kind, ui) {
+  await loadScript(CDN.jszip);
+  const cfg = OFFICE[kind];
+  const zip = await JSZip.loadAsync(file);
+  const names = Object.keys(zip.files);
+  const xmlNames = names.filter(n => cfg.parts.test(n)).sort((a, b) => (parseInt(a.match(/\d+/)) || 0) - (parseInt(b.match(/\d+/)) || 0));
+  const media = names.filter(n => cfg.media.test(n));
+  ui.total(xmlNames.length + media.length);
+  let step = 0, allText = '';
+  // текст: каждая часть (слайд) — один запрос с контекстом всего слайда
+  for (const name of xmlNames) {
+    if (ui.cancelled()) throw new Error('cancelled');
+    step++; ui.stage(step, 'translate');
+    const xml = await zip.file(name).async('string');
+    const doc = new DOMParser().parseFromString(xml, 'application/xml');
+    const pars = mergeLabelParagraphs(officeParagraphs(doc, cfg));
+    allText += pars.map(p => p.full).join('\n') + '\n';
+    if (pars.length) {
+      const tagged = pars.map(paragraphToTagged);
+      const context = pars.map(p => p.full).join('\n').slice(0, 3800);
+      const tr = await translateTexts(tagged.map(t => t.tagged), context, true);
+      const plainIdx = [];
+      tr.forEach((t, i) => {
+        if (tagged[i].simple || !t) return;
+        const words = t.replace(/<[^>]+>/g, ' ').toLowerCase().match(/\p{L}{4,}/gu) || [];
+        const src = pars[i].full.toLowerCase().match(/\p{L}{4,}/gu) || [];
+        const dupT = words.length - new Set(words).size, dupS = src.length - new Set(src).size;
+        if (dupT > dupS) plainIdx.push(i);
+      });
+      if (plainIdx.length) {
+        const again = await translateTexts(plainIdx.map(i => escXml(pars[i].full)), context, true);
+        plainIdx.forEach((i, k) => {
+          // весь абзац одним куском; форматирование берём от первого фрагмента
+          const p = pars[i]; p.parts.slice(1).forEach(x => x.ts.forEach(t => t.textContent = ''));
+          tr[i] = again[k]; tagged[i].simple = true; p.parts = [p.parts[0]];
+        });
+      }
+      const bodies = new Set();
+      pars.forEach((par, i) => {
+        if (!tr[i]) return;
+        const body = (function f(n) { while (n && n.localName !== 'txBody') n = n.parentNode; return n; })(par.p);
+        applyTranslation(par, tr[i], tagged[i].simple);
+        if (body) bodies.add(body);
+      });
+      fitPptxBodies(doc, cfg, bodies);
+      zip.file(name, new XMLSerializer().serializeToString(doc));
+    }
+    ui.done(step);
+  }
+  // картинки внутри файла
+  for (const name of media) {
+    if (ui.cancelled()) throw new Error('cancelled');
+    step++; ui.stage(step, 'ocr');
+    try {
+      const data = await zip.file(name).async('blob');
+      const typed = new Blob([data], { type: /\.png$/i.test(name) ? 'image/png' : 'image/jpeg' });
+      const probe = await loadImage(typed);
+      if (probe.naturalWidth >= 160 && probe.naturalHeight >= 80 && probe.naturalWidth * probe.naturalHeight <= 16e6) {
+        const { canvas, res } = await processImageBlob(typed, null, step, true, allText.slice(0, 2500));
+        if (res.blocks.length) zip.file(name, await canvasToBlob(canvas, typed.type, 0.9));
+        freeCanvas(canvas);
+      }
+    } catch (e) { console.warn('image', name, e); }
+    ui.done(step);
+  }
+  const mime = kind === 'pptx' ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  return await zip.generateAsync({ type: 'blob', mimeType: mime, compression: 'DEFLATE' });
+}
+
+/* ---------- PDF для скачивания из картинок страниц ---------- */
+async function pagesToPdf(pages, getBlob) {
+  await loadScript(CDN.jspdf);
+  const { jsPDF } = window.jspdf;
+  let pdf = null;
+  for (const p of pages) {
+    const blob = await getBlob(p);
+    const data = new Uint8Array(await blob.arrayBuffer());
+    const w = p.w * 0.75, h = p.h * 0.75;                // px → pt
+    if (!pdf) pdf = new jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'pt', format: [w, h], compress: true });
+    else pdf.addPage([w, h], w > h ? 'l' : 'p');
+    pdf.addImage(data, 'JPEG', 0, 0, w, h, undefined, 'FAST');
+  }
+  return pdf.output('blob');
+}
+
+window.Engine = { processPdf, processImage, processOffice, pagesToPdf, QuotaError, CDN, loadScript };
+
+</script>
+<script>
+/* =====================================================================
+   ИНТЕРФЕЙС
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const T = {
+  uk: {
+    upload: 'Завантажити файл', drop: 'або перетягни файл сюди', orCode: 'або введи код від учителя', open: 'Відкрити',
+    recent: 'Нещодавні', cancel: 'Скасувати', share: 'Код', download: 'PDF', downloadFile: 'Завантажити',
+    read: 'Читаю сторінку', ocr: 'Шукаю текст на картинках', translate: 'Перекладаю', paint: 'Малюю переклад',
+    page: 'Сторінка {i} з {n}', part: 'Частина {i} з {n}', ocrLoad: 'Завантажую розпізнавання тексту… {p}%',
+    hashing: 'Перевіряю, чи вже перекладали цей файл', cached: 'Вже перекладено, відкриваю', saving: 'Зберігаю для класу… {i}/{n}',
+    codeLabel: 'КОД ДЛЯ КЛАСУ', shareNote: 'Учні відкривають сайт і вводять цей код. Переклад відкриється одразу.', copy: 'Копіювати',
+    copied: 'Скопійовано', notFound: 'Код не знайдено', noCloud: 'Коди ще не налаштовані на сервері',
+    unsupported: 'Цей формат поки не підтримується. Збережи файл як PDF.', keynote: 'Keynote: Файл → Експорт → PDF, потім завантаж PDF.',
+    oldOffice: 'Старий формат. Збережи як .pptx/.docx або PDF.', quota: 'Ліміт перекладів на цей місяць вичерпано. Спробуй пізніше.',
+    net: 'Немає зв’язку з сервером. Перевір інтернет.', fail: 'Щось пішло не так. Спробуй ще раз або збережи файл як PDF.',
+    tooBig: 'Файл завеликий (макс. 80 МБ).', tapHint: 'Натисни на текст — побачиш оригінал', savingShort: 'Зберігаю…',
+    officeNoCloud: 'Переклад готовий. Завантаж файл, щоб відкрити його.', original: 'ОРИГІНАЛ', translation: 'ПЕРЕКЛАД',
+    pagesWord: 'стор.', wait: 'Зачекай, переклад ще зберігається'
+  },
+  sv: {
+    upload: 'Ladda upp fil', drop: 'eller dra filen hit', orCode: 'eller skriv koden från läraren', open: 'Öppna',
+    recent: 'Senaste', cancel: 'Avbryt', share: 'Kod', download: 'PDF', downloadFile: 'Ladda ner',
+    read: 'Läser sidan', ocr: 'Letar text i bilder', translate: 'Översätter', paint: 'Ritar översättningen',
+    page: 'Sida {i} av {n}', part: 'Del {i} av {n}', ocrLoad: 'Laddar textigenkänning… {p}%',
+    hashing: 'Kollar om filen redan är översatt', cached: 'Redan översatt, öppnar', saving: 'Sparar för klassen… {i}/{n}',
+    codeLabel: 'KOD FÖR KLASSEN', shareNote: 'Eleverna öppnar sidan och skriver koden. Översättningen öppnas direkt.', copy: 'Kopiera',
+    copied: 'Kopierat', notFound: 'Koden finns inte', noCloud: 'Koder är inte inställda på servern än',
+    unsupported: 'Formatet stöds inte än. Spara filen som PDF.', keynote: 'Keynote: Arkiv → Exportera → PDF, ladda sedan upp PDF:en.',
+    oldOffice: 'Gammalt format. Spara som .pptx/.docx eller PDF.', quota: 'Månadens översättningskvot är slut. Försök senare.',
+    net: 'Ingen kontakt med servern. Kolla internet.', fail: 'Något gick fel. Försök igen eller spara filen som PDF.',
+    tooBig: 'Filen är för stor (max 80 MB).', tapHint: 'Tryck på texten för att se originalet', savingShort: 'Sparar…',
+    officeNoCloud: 'Översättningen är klar. Ladda ner filen för att öppna den.', original: 'ORIGINAL', translation: 'ÖVERSÄTTNING',
+    pagesWord: 'sid.', wait: 'Vänta, översättningen sparas fortfarande'
+  }
+};
+let LANG = (() => { try { return localStorage.getItem('lang') || ((navigator.language || '').startsWith('sv') ? 'sv' : 'uk'); } catch (e) { return 'uk'; } })();
+const t = (k, v) => (T[LANG][k] || k).replace(/\{(\w+)\}/g, (_, x) => v && v[x] !== undefined ? v[x] : '');
+function applyLang() {
+  document.documentElement.lang = LANG === 'sv' ? 'sv' : 'uk';
+  document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === LANG));
+  renderRecent();
+}
+document.querySelectorAll('#lang button').forEach(b => b.onclick = () => { LANG = b.dataset.l; try { localStorage.setItem('lang', LANG); } catch (e) {} applyLang(); });
+
+function show(id) { ['home', 'work', 'view'].forEach(s => $('#' + s).classList.toggle('hidden', s !== id)); $('#scene').classList.toggle('hidden', id === 'view'); $('#lang').classList.toggle('hidden', id === 'view'); }
+
+/* ---------- звёзды ---------- */
+(function stars() {
+  const box = $('#stars'); let h = '';
+  for (let i = 0; i < 46; i++) {
+    const x = Math.random() * 100, y = Math.random() * 60, r = Math.random();
+    h += `<i class="${r < 0.12 ? 'r' : r < 0.25 ? 'b' : ''} ${r > 0.8 ? 't' : ''}" style="left:${x}%;top:${y}%;animation-delay:${(Math.random() * 3).toFixed(1)}s"></i>`;
+  }
+  box.innerHTML = h;
+})();
+
+/* ---------- облако (коды) ---------- */
+let CLOUD = null;
+async function cloudOn() {
+  if (CLOUD !== null) return CLOUD;
+  try { const r = await fetch('/api/doc?cfg=1'); CLOUD = r.ok && (await r.json()).cloud; } catch (e) { CLOUD = false; }
+  return CLOUD;
+}
+async function getDoc(q) { const r = await fetch('/api/doc?' + q); if (r.status === 404) return null; if (r.status === 503) throw new Error('noCloud'); if (!r.ok) throw new Error('net'); return r.json(); }
+let _blobMod = null;
+async function uploadBlob(path, blob) {
+  if (!_blobMod) _blobMod = await import(Engine.CDN.blob);
+  const res = await _blobMod.upload(path, blob, { access: 'public', handleUploadUrl: '/api/upload', contentType: blob.type });
+  return res.url;
+}
+
+/* ---------- недавние ---------- */
+function recentList() { try { return JSON.parse(localStorage.getItem('recent') || '[]'); } catch (e) { return []; } }
+function addRecent(meta) {
+  const list = recentList().filter(r => r.code !== meta.code);
+  list.unshift({ code: meta.code, title: meta.title, n: meta.pages ? meta.pages.length : 0 });
+  try { localStorage.setItem('recent', JSON.stringify(list.slice(0, 6))); } catch (e) {}
+  renderRecent();
+}
+function renderRecent() {
+  const list = recentList(); const box = $('#recent');
+  box.classList.toggle('hidden', !list.length);
+  box.innerHTML = list.length ? `<div class="lbl">${t('recent')}</div>` + list.map(r => `<a href="?d=${r.code}" data-code="${r.code}"><span>${esc(r.title || r.code)}</span><span>${r.code}</span></a>`).join('') : '';
+  box.querySelectorAll('a').forEach(a => a.onclick = e => { e.preventDefault(); openCode(a.dataset.code); });
+}
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* ---------- главный экран ---------- */
+const fileInput = $('#file');
+$('#pick').onclick = () => fileInput.click();
+fileInput.onchange = () => { if (fileInput.files[0]) startFile(fileInput.files[0]); fileInput.value = ''; };
+const drop = $('#drop');
+['dragenter', 'dragover'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); if (!$('#home').classList.contains('hidden')) drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); if (ev === 'dragleave' && e.relatedTarget) return; drop.classList.remove('over'); }));
+document.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.files[0]; if (f && !$('#home').classList.contains('hidden')) startFile(f); });
+const codeInput = $('#code');
+codeInput.oninput = () => { codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5); $('#err').textContent = ''; };
+codeInput.onkeydown = e => { if (e.key === 'Enter') $('#open').click(); };
+$('#open').onclick = () => { const c = codeInput.value.trim(); if (c.length === 5) openCode(c); else codeInput.focus(); };
+function homeError(msg) { show('home'); $('#err').textContent = msg; }
+
+async function openCode(code) {
+  $('#err').textContent = '';
+  try {
+    const meta = await getDoc('code=' + encodeURIComponent(code));
+    if (!meta) return homeError(t('notFound'));
+    openViewer(fromMeta(meta)); addRecent(meta);
+    history.replaceState(null, '', '?d=' + meta.code);
+  } catch (e) { homeError(t(e.message === 'noCloud' ? 'noCloud' : 'net')); }
+}
+function fromMeta(meta) {
+  return { title: meta.title, kind: meta.kind, code: meta.code, fileUrl: meta.file, pages: (meta.pages || []).map(p => ({ w: p.w, h: p.h, uk: p.uk, sv: p.sv, blocks: p.blocks || [] })) };
+}
+
+/* ---------- обработка файла ---------- */
+let job = null;
+function kindOf(f) {
+  const n = (f.name || '').toLowerCase();
+  if (n.endsWith('.pdf') || f.type === 'application/pdf') return 'pdf';
+  if (n.endsWith('.pptx')) return 'pptx';
+  if (n.endsWith('.docx')) return 'docx';
+  if (/\.(jpe?g|png|webp)$/.test(n) || /^image\/(jpeg|png|webp)$/.test(f.type)) return 'image';
+  if (n.endsWith('.key')) return 'keynote';
+  if (/\.(ppt|doc|pps|odp|odt)$/.test(n)) return 'old';
+  if (/\.(heic|heif)$/.test(n)) return 'image';
+  return 'unknown';
+}
+async function sha256(buf) { const h = await crypto.subtle.digest('SHA-256', buf); return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2, '0')).join(''); }
+
+async function startFile(file) {
+  const kind = kindOf(file);
+  if (kind === 'keynote') return homeError(t('keynote'));
+  if (kind === 'old') return homeError(t('oldOffice'));
+  if (kind === 'unknown') return homeError(t('unsupported'));
+  if (file.size > 80 * 1024 * 1024) return homeError(t('tooBig'));
+  const title = file.name.replace(/\.[^.]+$/, '');
+  job = { cancelled: false, total: 1, done: new Set(), title };
+  show('work'); $('#w-title').textContent = title; drawBar(0); setStage(t('hashing'), '');
+  try {
+    const buf = await file.arrayBuffer();
+    let hash = null;
+    try { hash = await sha256(buf); } catch (e) {}
+    if (hash && !new URLSearchParams(location.search).has('nocache') && await cloudOn()) {
+      try { const meta = await getDoc('hash=' + hash); if (meta) { setStage(t('cached'), ''); drawBar(1); openViewer(fromMeta(meta)); addRecent(meta); history.replaceState(null, '', '?d=' + meta.code); return; } } catch (e) {}
+    }
+    const ui = makeUi(kind);
+    let doc;
+    if (kind === 'pdf') doc = { title, kind, pages: await Engine.processPdf(buf, ui) };
+    else if (kind === 'image') doc = { title, kind, pages: await Engine.processImage(file, ui) };
+    else doc = { title, kind, fileBlob: await Engine.processOffice(new Blob([buf]), kind, ui), fileName: file.name.replace(/(\.[^.]+)$/, ' (UA)$1') };
+    if (job.cancelled) return;
+    doc.pages = doc.pages || [];
+    doc.pages.forEach(p => { p.uk = p.ukBlob ? URL.createObjectURL(p.ukBlob) : ''; p.sv = p.svBlob ? URL.createObjectURL(p.svBlob) : p.uk; });
+    if (doc.fileBlob) doc.fileUrlLocal = URL.createObjectURL(doc.fileBlob);
+    doc.saving = true;
+    openViewer(doc);
+    saveDoc(doc, hash);
+  } catch (e) {
+    console.error(e);
+    if (e && e.message === 'cancelled') return show('home');
+    homeError(e instanceof Engine.QuotaError ? t('quota') : e && e.message === 'net' ? t('net') : t('fail'));
+  }
+}
+$('#w-cancel').onclick = () => { if (job) job.cancelled = true; show('home'); };
+
+function makeUi(kind) {
+  const word = kind === 'pdf' || kind === 'image' ? 'page' : 'part';
+  return {
+    total: n => { job.total = n; drawBar(0); },
+    stage: (i, s) => { if (!job.cancelled) setStage(t(s) + '…', t(word, { i, n: job.total })); },
+    done: i => { job.done.add(i); drawBar(job.done.size / job.total); },
+    ocrLoad: p => setSub(t('ocrLoad', { p: Math.round(p * 100) })),
+    cancelled: () => job.cancelled
+  };
+}
+function drawBar(frac) {
+  const n = 20, on = Math.round(frac * n);
+  $('#w-bar').innerHTML = Array.from({ length: n }, (_, i) => `<i class="${i < on ? 'on' : ''}"></i>`).join('');
+}
+function setStage(a, b) { $('#w-stage').innerHTML = esc(a).replace(/…$/, '<span class="blink">…</span>'); $('#w-sub').textContent = b || ''; }
+function setSub(b) { $('#w-sub').textContent = b; }
+
+/* ---------- сохранение для класса ---------- */
+async function saveDoc(doc, hash) {
+  if (!(await cloudOn())) { doc.saving = false; updateShareBtn(); return; }
+  try {
+    const { code } = await (await fetch('/api/doc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'new' }) })).json();
+    if (!code) throw new Error('code');
+    const meta = { title: doc.title, kind: doc.kind, pages: [], file: '' };
+    let done = 0; const n = doc.pages.length * 2 + (doc.fileBlob ? 1 : 0);
+    const tick = () => { done++; doc.saveProgress = done / n; updateShareBtn(); };
+    if (doc.fileBlob) { meta.file = await uploadBlob(`docs/${code}/${doc.kind === 'pptx' ? 'file.pptx' : 'file.docx'}`, doc.fileBlob); tick(); }
+    const urls = new Array(doc.pages.length);
+    let k = 0;
+    await Promise.all(Array.from({ length: 3 }, async () => {
+      while (k < doc.pages.length) {
+        const i = k++; const p = doc.pages[i];
+        const uk = await uploadBlob(`docs/${code}/p${i + 1}-uk.jpg`, p.ukBlob); tick();
+        const sv = p.svBlob === p.ukBlob ? uk : await uploadBlob(`docs/${code}/p${i + 1}-sv.jpg`, p.svBlob); tick();
+        urls[i] = { w: p.w, h: p.h, uk, sv, blocks: p.blocks };
+      }
+    }));
+    meta.pages = urls;
+    const r = await fetch('/api/doc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'finish', code, hash, meta }) });
+    if (!r.ok) throw new Error('finish');
+    doc.code = code; doc.saving = false; doc.fileUrl = meta.file || doc.fileUrl;
+    addRecent({ code, title: doc.title, pages: urls });
+    if (CUR === doc) { history.replaceState(null, '', '?d=' + code); if (doc.kind === 'pptx' || doc.kind === 'docx') showOffice(doc); }
+  } catch (e) { console.warn('save failed', e); doc.saving = false; doc.saveFailed = true; }
+  updateShareBtn();
+}
+
+/* =====================================================================
+   ПРОСМОТР
+   ===================================================================== */
+let CUR = null, IDX = 0, MODE = 'uk';
+function openViewer(doc) {
+  CUR = doc; IDX = 0; MODE = 'uk';
+  show('view');
+  $('#v-title').textContent = doc.title || '';
+  document.querySelectorAll('#v-mode button').forEach(b => b.classList.toggle('on', b.dataset.m === MODE));
+  const office = doc.kind === 'pptx' || doc.kind === 'docx';
+  $('#v-stage').classList.toggle('hidden', office);
+  $('#v-mode').classList.toggle('hidden', office);
+  ['#v-prev', '#v-next', '#v-count'].forEach(s => $(s).classList.toggle('hidden', office));
+  $('#v-office').classList.add('hidden'); $('#v-office-msg').classList.add('hidden');
+  if (office) showOffice(doc);
+  else buildPages(doc);
+  updateShareBtn();
+}
+function showOffice(doc) {
+  const frame = $('#v-office'), msg = $('#v-office-msg');
+  if (doc.fileUrl) {
+    frame.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(doc.fileUrl);
+    frame.classList.remove('hidden'); msg.classList.add('hidden');
+  } else {
+    frame.classList.add('hidden'); msg.classList.remove('hidden');
+    msg.innerHTML = `<div>${esc(doc.saving ? t('savingShort') : t('officeNoCloud'))}</div>`;
+  }
+}
+function buildPages(doc) {
+  const wrap = $('#v-pages');
+  wrap.innerHTML = doc.pages.map((p, i) => `<div class="pg" data-i="${i}"><div class="holder"><img alt="" draggable="false" data-i="${i}"><div class="hot"></div></div></div>`).join('');
+  loadAround(); goto(0, true);
+}
+function pageSrc(p) { return MODE === 'uk' ? p.uk : p.sv; }
+function loadAround() {
+  // грузим текущую и соседние страницы (экономим память айпада)
+  document.querySelectorAll('#v-pages .pg').forEach(pg => {
+    const i = +pg.dataset.i, img = pg.querySelector('img'), p = CUR.pages[i];
+    if (Math.abs(i - IDX) <= 2) {
+      const src = pageSrc(p);
+      if (img.dataset.src !== src) { img.dataset.src = src; img.src = src; }
+      const hot = pg.querySelector('.hot');
+      if (hot.dataset.mode !== MODE) {
+        hot.dataset.mode = MODE;
+        hot.innerHTML = MODE === 'uk' ? p.blocks.map((b, k) => `<i data-k="${k}" style="left:${b.x0 * 100}%;top:${b.y0 * 100}%;width:${(b.x1 - b.x0) * 100}%;height:${(b.y1 - b.y0) * 100}%"></i>`).join('') : '';
+      }
+    } else if (Math.abs(i - IDX) > 4 && img.dataset.src) { img.removeAttribute('src'); delete img.dataset.src; }
+  });
+}
+function goto(i, instant) {
+  if (!CUR || !CUR.pages.length) return;
+  IDX = Math.max(0, Math.min(CUR.pages.length - 1, i));
+  const pages = $('#v-pages');
+  if (instant) { pages.style.transition = 'none'; requestAnimationFrame(() => pages.style.transition = ''); }
+  pages.style.transform = `translateX(${-IDX * 100}%)`;
+  $('#v-count').textContent = `${IDX + 1} / ${CUR.pages.length}`;
+  $('#v-prev').disabled = IDX === 0; $('#v-next').disabled = IDX === CUR.pages.length - 1;
+  hideTip(); loadAround();
+}
+$('#v-prev').onclick = () => goto(IDX - 1);
+$('#v-next').onclick = () => goto(IDX + 1);
+$('#v-back').onclick = () => { show('home'); history.replaceState(null, '', location.pathname); $('#v-office').src = 'about:blank'; };
+document.querySelectorAll('#v-mode button').forEach(b => b.onclick = () => setMode(b.dataset.m));
+function setMode(m) { MODE = m; document.querySelectorAll('#v-mode button').forEach(x => x.classList.toggle('on', x.dataset.m === m)); hideTip(); loadAround(); }
+document.addEventListener('keydown', e => {
+  if ($('#view').classList.contains('hidden') || /INPUT/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); goto(IDX + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goto(IDX - 1); }
+  else if (e.key.toLowerCase() === 'o' || e.key === 'Tab') { e.preventDefault(); setMode(MODE === 'uk' ? 'sv' : 'uk'); }
+  else if (e.key === 'Escape') hideTip();
+});
+// свайп
+(function swipe() {
+  const st = $('#v-stage'); let sx = 0, sy = 0, t0 = 0, multi = false;
+  st.addEventListener('touchstart', e => { multi = e.touches.length > 1; sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now(); }, { passive: true });
+  st.addEventListener('touchend', e => {
+    if (multi || (window.visualViewport && window.visualViewport.scale > 1.05)) return;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - t0 < 700) goto(IDX + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+})();
+// нажатие на текст → оригинал
+const tip = $('#tip');
+$('#v-pages').addEventListener('click', e => {
+  const hit = e.target.closest('.hot i');
+  if (!hit) return hideTip();
+  const b = CUR.pages[IDX].blocks[+hit.dataset.k]; if (!b) return;
+  tip.innerHTML = `<div class="k">${t('original')}</div><div class="sv">${esc(b.sv)}</div><div class="uk">${esc(b.uk)}</div>`;
+  tip.classList.remove('hidden');
+  const r = hit.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+  let x = Math.min(window.innerWidth - tw - 10, Math.max(10, r.left + r.width / 2 - tw / 2));
+  let y = r.bottom + 10; if (y + th > window.innerHeight - 70) y = Math.max(60, r.top - th - 10);
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  e.stopPropagation();
+});
+function hideTip() { tip.classList.add('hidden'); }
+
+/* ---------- скачать ---------- */
+$('#v-dl').onclick = async () => {
+  if (!CUR) return;
+  const btn = $('#v-dl'); btn.disabled = true;
+  try {
+    if (CUR.kind === 'pptx' || CUR.kind === 'docx') {
+      saveAs(CUR.fileBlob || await (await fetch(CUR.fileUrl)).blob(), CUR.fileName || (CUR.title + ' (UA).' + CUR.kind));
+    } else {
+      const blob = await Engine.pagesToPdf(CUR.pages, async p => p.ukBlob || await (await fetch(p.uk)).blob());
+      saveAs(blob, (CUR.title || 'pereklad') + ' (UA).pdf');
+    }
+  } catch (e) { console.error(e); alert(t('fail')); }
+  btn.disabled = false;
+};
+function saveAs(blob, name) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+}
+
+/* ---------- поделиться ---------- */
+function updateShareBtn() {
+  const b = $('#v-share'); if (!CUR) return;
+  b.classList.toggle('hidden', !CUR.code && !CUR.saving);
+  b.disabled = !CUR.code;
+  b.querySelector('span').textContent = CUR.code ? t('share') + ' ' + CUR.code : t('savingShort') + (CUR.saveProgress ? ' ' + Math.round(CUR.saveProgress * 100) + '%' : '');
+}
+$('#v-share').onclick = () => {
+  if (!CUR || !CUR.code) return;
+  const link = location.origin + location.pathname + '?d=' + CUR.code;
+  $('#s-code').textContent = CUR.code; $('#s-link').textContent = link.replace(/^https?:\/\//, '');
+  $('#s-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(link);
+  $('#share').classList.remove('hidden');
+};
+$('#s-close').onclick = () => $('#share').classList.add('hidden');
+$('#share').onclick = e => { if (e.target.id === 'share') $('#share').classList.add('hidden'); };
+$('#s-copy').onclick = async () => {
+  try { await navigator.clipboard.writeText(location.origin + location.pathname + '?d=' + CUR.code); $('#s-copy').textContent = t('copied'); setTimeout(() => $('#s-copy').textContent = t('copy'), 1500); } catch (e) {}
+};
+
+/* ---------- старт ---------- */
+applyLang();
+(function boot() {
+  const d = new URLSearchParams(location.search).get('d');
+  if (d) openCode(d.toUpperCase());
+  cloudOn();
+})();
+
+</script>
+</body>
+</html>

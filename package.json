@@ -1,0 +1,9 @@
+{
+  "name": "perevod",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Перевод школьных материалов svenska → українська",
+  "dependencies": {
+    "@vercel/blob": "^2.8.2"
+  }
+}
